@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Root</title>
+    <title>Pokemon</title>
     <script src="/static/js/vendor/htmx-2.0.4.min.js" defer></script>
     <link href="./static/output.css" rel="stylesheet">
 </head>
 <body>
-    <h1 class="text-xl">Hello World</h1>
-    <a href="/pokemon">Pokemon</a>
+    <h1>Pokemon</h1>
+    <p>This is the Pokemon section. You can see a list of all the Pokemon and you can play Who's That Pokemon.</p>
+    <h2>The Original Pokemon</h2>
+    {% for pokemon in pokemons %}
+        <p>{{pokemon[1]}}</p>
+    {% endfor %}
 </body>
 </html>

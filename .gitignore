@@ -4,3 +4,4 @@ venv
 *.db
 output.css
 vendor
+notes.md
