@@ -1,4 +1,5 @@
 import sqlite3
+from dataclasses import dataclass
 
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
@@ -9,6 +10,13 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
+
+@dataclass
+class Pokemon:
+    name: str
+    pokemon_id: int
+    pokemon_order: int
+
 
 @app.get("/")
 async def root(request: Request):
@@ -26,8 +34,17 @@ async def pokemon_index(request: Request):
         
         cursor.execute("SELECT * FROM pokemon;")
 
-        pokemons = cursor.fetchall()
-        
+        rows = cursor.fetchall()
+
+        pokemons = []
+        for row in rows:
+            pokemon = Pokemon(
+                name=row[1],
+                pokemon_id=row[2],
+                pokemon_order=row[3]
+            )
+            pokemons.append(pokemon)
+
     except Exception as e:
         print(f"an error occured")
 
