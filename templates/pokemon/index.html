@@ -3,13 +3,15 @@
 {% block title %}<title>Pokemon</title>{% endblock title %}
 
 {% block content %}
-    <h1>Pokemon</h1>
-    <p>This is the Pokemon section. You can see a list of all the Pokemon and you can play Who's That Pokemon.</p>
-    <h2>Who's That Pokemon</h2>
-    <p>Test your knowledge of the original 151 Pokemon in this multiple choice Pokemon quiz.</p>
-    <a href="/pokemon/play">Play</a>
-    <h2>The Original Pokemon</h2>
-    {% for pokemon in pokemons %}
-        <p>{{pokemon.name.capitalize()}}</p>
-    {% endfor %}
+    <div class="max-w-[800px] mx-auto">
+        <h1>Pokemon</h1>
+        <p>This is the Pokemon section. You can see a list of all the Pokemon and you can play Who's That Pokemon.</p>
+        <h2>Who's That Pokemon</h2>
+        <p>Test your knowledge of the original 151 Pokemon in this multiple choice Pokemon quiz.</p>
+        <a href="/pokemon/play">Play</a>
+        <h2>The Original Pokemon</h2>
+        {% for pokemon in pokemons %}
+            <p>{{pokemon.name.capitalize()}}</p>
+        {% endfor %}
+    </div>
 {% endblock content %}

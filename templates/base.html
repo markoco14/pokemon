@@ -8,8 +8,11 @@
     <link href="/static/output.css" rel="stylesheet">
 </head>
 <body>
-    {% block content %}
-    
-    {% endblock content %}
+    <header class="max-w-[800px] mx-auto">
+        <span class="text-xl uppercase">Pokemon Games</span>
+    </header>
+    <main>
+        {% block content %}{% endblock content %}
+    </main>
 </body>
 </html>
