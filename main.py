@@ -3,6 +3,7 @@ import sqlite3
 from dataclasses import dataclass
 
 from fastapi import FastAPI, Request
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -12,6 +13,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
+games = {}
 @dataclass
 class Pokemon:
     name: str
@@ -27,11 +29,10 @@ async def root(request: Request):
 
 @app.get("/pokemon")
 async def pokemon_index(request: Request):
-    
     try:
         connection = sqlite3.connect('pokemon.db')
 
-        cursor = connection.cursor()\
+        cursor = connection.cursor()
         
         cursor.execute("SELECT * FROM pokemon;")
 
@@ -60,6 +61,22 @@ async def pokemon_index(request: Request):
 
 @app.get("/pokemon/play")
 async def pokemon_play(request: Request):
+    game_id = random.randint(1000, 10001)
+    games[game_id] = {}
+    return RedirectResponse(url=f"/pokemon/play/{game_id}")
+
+@app.get("/pokemon/play/{game_id}")
+async def pokemon_play(request: Request, game_id: int):
+    if game_id not in games:
+        return RedirectResponse(url="/pokemon", status_code=303)  
+
+    if game_id in games and games[game_id].get("pokemons"):
+        pokemons = games[game_id]["pokemons"]
+
+        return templates.TemplateResponse(
+            request=request, name="pokemon/play.html", context={"pokemons": pokemons}
+        )  
+    
     unique = False
     random_numbers = []
     while unique == False:
@@ -88,6 +105,8 @@ async def pokemon_play(request: Request):
         if connection:
             cursor.close()
             connection.close()
+
+    games[game_id] = {"answer": pokemons[0], "pokemons": pokemons, "guesses": []}
 
     return templates.TemplateResponse(
         request=request, name="pokemon/play.html", context={"pokemons": pokemons}
