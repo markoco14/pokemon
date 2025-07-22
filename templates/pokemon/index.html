@@ -1,18 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokemon</title>
-    <script src="/static/js/vendor/htmx-2.0.4.min.js" defer></script>
-    <link href="./static/output.css" rel="stylesheet">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}<title>Pokemon</title>{% endblock title %}
+
+{% block content %}
     <h1>Pokemon</h1>
     <p>This is the Pokemon section. You can see a list of all the Pokemon and you can play Who's That Pokemon.</p>
     <h2>The Original Pokemon</h2>
     {% for pokemon in pokemons %}
-        <p>{{pokemon.name}}</p>
+        <p>{{pokemon.name.capitalize()}}</p>
     {% endfor %}
-</body>
-</html>
+{% endblock content %}
