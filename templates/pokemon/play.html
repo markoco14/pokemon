@@ -5,5 +5,8 @@
 {% block content %}
     <div class="max-w-[800px] mx-auto">
         <h1>Who's That Pokemon</h1>
+        {% for pokemon in pokemons  %}
+            <p>{{pokemon.name.capitalize()}}</p>
+        {% endfor %}
     </div>
 {% endblock content %}
