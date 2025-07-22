@@ -56,3 +56,9 @@ async def pokemon_index(request: Request):
     return templates.TemplateResponse(
         request=request, name="pokemon/index.html", context={"pokemons": pokemons}
     )
+
+@app.get("/pokemon/play")
+async def pokemon_play(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="pokemon/play.html", context={}
+    )
