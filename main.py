@@ -1,6 +1,7 @@
 import random
 import sqlite3
 from dataclasses import dataclass
+from typing import List
 
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
@@ -20,12 +21,55 @@ class Pokemon:
     pokemon_id: int
     pokemon_order: int
 
+@dataclass
+class Game:
+    id: int
+    answer: Pokemon
+    pokemons: List[Pokemon]
+    guesses: List[int]
+
+def get_four_unique_numbers() -> List[int]:
+    unique = False
+    random_numbers = []
+    while unique == False:
+        random_number = random.randint(1, 151)
+        if random_number not in random_numbers:
+            random_numbers.append(random_number)
+        if len(random_numbers) == 4:
+            unique = True
+
+    return random_numbers
+
+def get_four_pokemon(random_numbers: List[int]) -> List[Pokemon]:
+    pokemons = []
+    try:
+        connection = sqlite3.connect("pokemon.db")
+        cursor = connection.cursor()
+        for number in random_numbers:
+            cursor.execute(f"SELECT * FROM pokemon WHERE id = {number}")
+            row = cursor.fetchone()
+            pokemon = Pokemon(
+                name=row[1],
+                pokemon_id=row[2],
+                pokemon_order=row[3]
+            )
+            pokemons.append(pokemon)
+    except Exception as e:
+        print(f"There was an error: {e}")
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
+    return pokemons
+
 
 @app.get("/")
 async def root(request: Request):
     return templates.TemplateResponse(
         request=request, name="index.html", context={}
     )
+
 
 @app.get("/pokemon")
 async def pokemon_index(request: Request):
@@ -59,55 +103,41 @@ async def pokemon_index(request: Request):
         request=request, name="pokemon/index.html", context={"pokemons": pokemons}
     )
 
+
 @app.get("/pokemon/play")
 async def pokemon_play(request: Request):
     game_id = random.randint(1000, 10001)
-    games[game_id] = {}
+    random_numbers = get_four_unique_numbers()
+    pokemons = get_four_pokemon(random_numbers=random_numbers)
+
+    games[game_id] = Game(
+        id=game_id,
+        answer=pokemons[0],
+        pokemons=pokemons,
+        guesses=[]
+    )
+
     return RedirectResponse(url=f"/pokemon/play/{game_id}")
+
 
 @app.get("/pokemon/play/{game_id}")
 async def pokemon_play(request: Request, game_id: int):
     if game_id not in games:
         return RedirectResponse(url="/pokemon", status_code=303)  
 
-    if game_id in games and games[game_id].get("pokemons"):
-        pokemons = games[game_id]["pokemons"]
-
-        return templates.TemplateResponse(
-            request=request, name="pokemon/play.html", context={"pokemons": pokemons}
-        )  
-    
-    unique = False
-    random_numbers = []
-    while unique == False:
-        random_number = random.randint(1, 151)
-        if random_number not in random_numbers:
-            random_numbers.append(random_number)
-        if len(random_numbers) == 4:
-            unique = True
-
-    pokemons = []
-    try:
-        connection = sqlite3.connect("pokemon.db")
-        cursor = connection.cursor()
-        for number in random_numbers:
-            cursor.execute(f"SELECT * FROM pokemon WHERE id = {number}")
-            row = cursor.fetchone()
-            pokemon = Pokemon(
-                name=row[1],
-                pokemon_id=row[2],
-                pokemon_order=row[3]
-            )
-            pokemons.append(pokemon)
-    except Exception as e:
-        print(f"There was an error: {e}")
-    finally:
-        if connection:
-            cursor.close()
-            connection.close()
-
-    games[game_id] = {"answer": pokemons[0], "pokemons": pokemons, "guesses": []}
-
     return templates.TemplateResponse(
-        request=request, name="pokemon/play.html", context={"pokemons": pokemons}
+        request=request, name="pokemon/play.html", context={"pokemons": games[game_id].pokemons, "game_id": game_id, "guesses": games[game_id].guesses}
     )
+
+
+@app.get("/pokemon/play/{game_id}/{guess_pokemon_id}")
+def guess_that_pokemon(request: Request, game_id: int, guess_pokemon_id: int):
+    if not games.get(game_id):
+        return RedirectResponse(url="/pokemon", status_code=303)
+
+    # if guess_pokemon_id == games[game_id]["answer"].pokemon_id:
+    #     print("You guessed right")
+    games[game_id].guesses.append(guess_pokemon_id)
+    
+
+    return RedirectResponse(url=f"/pokemon/play/{game_id}")
