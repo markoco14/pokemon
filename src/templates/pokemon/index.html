@@ -3,15 +3,21 @@
 {% block title %}<title>Pokemon</title>{% endblock title %}
 
 {% block content %}
-    <div class="max-w-[800px] mx-auto">
-        <h1>Pokemon</h1>
-        <p>This is the Pokemon section. You can see a list of all the Pokemon and you can play Who's That Pokemon.</p>
-        <h2>Who's That Pokemon</h2>
-        <p>Test your knowledge of the original 151 Pokemon in this multiple choice Pokemon quiz.</p>
-        <a href="/pokemon/play">Play</a>
-        <h2>The Original Pokemon</h2>
-        {% for pokemon in pokemons %}
-            <p>{{pokemon.name.capitalize()}}</p>
-        {% endfor %}
+    <div class="max-w-[800px] mx-auto px-2">
+        <section class="mb-4">
+            <h1 class="text-2xl underline underline-offset-2">ESL Pokemon Games</h1>
+            <p>Welcome to ESL Pokemon Games. Our goal is to make the most games and the best games for ESl students of all ages to learn about Pokemon. Many of your students will know most of the Pokemon in their own language, so we help them learn the Pokemon's English names while playing games in the classroom. They are guaranteed to go home and annoy their parents with all the new, useful English words they learned today. Enjoy :)</p>
+        </section>
+        <section class="mb-4">
+            <h2 class="text-xl underline underline-offset-2">Who's That Pokemon</h2>
+            <p>Test your knowledge of the original 151 Pokemon in this multiple choice Pokemon quiz.</p>
+            <a href="/pokemon/play" class="underline underline-offset-2 hover:text-blue-500">Play Now</a>
+        </section>
+        <section class="mb-4">
+            <h2 class="text-xl underline underline-offset-2">The Original Pokemon</h2>
+            {% for pokemon in pokemons %}
+                <p>{{pokemon.name.capitalize()}}</p>
+            {% endfor %}
+        </section>
     </div>
 {% endblock content %}
