@@ -126,7 +126,7 @@ async def pokemon_play(request: Request, game_id: int):
         return RedirectResponse(url="/pokemon", status_code=303)  
 
     return templates.TemplateResponse(
-        request=request, name="pokemon/play.html", context={"pokemons": games[game_id].pokemons, "game_id": game_id, "guesses": games[game_id].guesses}
+        request=request, name="pokemon/play.html", context={"game": games[game_id]}
     )
 
 

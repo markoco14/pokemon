@@ -6,8 +6,8 @@
     <div class="max-w-[800px] mx-auto">
         <h1>Who's That Pokemon</h1>
         <div class="grid">
-            {% for pokemon in pokemons  %}
-                <a href="/pokemon/play/{{game_id}}/{{pokemon.pokemon_id}}" class="border rounded">{{pokemon.name.capitalize()}}</a>
+            {% for pokemon in game.pokemons  %}
+                <a href="/pokemon/play/{{game.id}}/{{pokemon.pokemon_id}}" class="border rounded">{{pokemon.name.capitalize()}}</a>
             {% endfor %}
         </div>
     </div>
