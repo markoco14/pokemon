@@ -27,6 +27,7 @@ class Game:
     answer: Pokemon
     pokemons: List[Pokemon]
     guesses: List[int]
+    finished: bool
 
 def get_four_unique_numbers() -> List[int]:
     unique = False
@@ -114,7 +115,8 @@ async def pokemon_play(request: Request):
         id=game_id,
         answer=pokemons[0],
         pokemons=pokemons,
-        guesses=[]
+        guesses=[],
+        finished=False
     )
 
     return RedirectResponse(url=f"/pokemon/play/{game_id}")
@@ -135,6 +137,10 @@ def guess_that_pokemon(request: Request, game_id: int, guess_pokemon_id: int):
     if not games.get(game_id):
         return RedirectResponse(url="/pokemon", status_code=303)
 
-    games[game_id].guesses.append(guess_pokemon_id)
+    if guess_pokemon_id not in games[game_id].guesses:
+        games[game_id].guesses.append(guess_pokemon_id)
 
+    if guess_pokemon_id == games[game_id].answer.pokemon_id:
+        games[game_id].finished = True
+    
     return RedirectResponse(url=f"/pokemon/play/{game_id}")
