@@ -110,10 +110,11 @@ async def pokemon_play(request: Request):
     game_id = random.randint(1000, 10001)
     random_numbers = get_four_unique_numbers()
     pokemons = get_four_pokemon(random_numbers=random_numbers)
+    answer = pokemons[random.randint(0,3)]
 
     games[game_id] = Game(
         id=game_id,
-        answer=pokemons[0],
+        answer=answer,
         pokemons=pokemons,
         guesses=[],
         finished=False
