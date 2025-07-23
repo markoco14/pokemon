@@ -5,9 +5,12 @@
 {% block content %}
     <div class="max-w-[800px] mx-auto">
         <h1>Who's That Pokemon</h1>
+        {# debug bar #}
+        <p>{{game.guesses}}</p>
         <div class="grid">
             {% for pokemon in game.pokemons  %}
-                <a href="/pokemon/play/{{game.id}}/{{pokemon.pokemon_id}}" class="border rounded">{{pokemon.name.capitalize()}}</a>
+                <a href="/pokemon/play/{{game.id}}/{{pokemon.pokemon_id}}"
+                    class="border rounded {% if pokemon.pokemon_id in game.guesses and pokemon.pokemon_id != game.answer.pokemon_id %}bg-orange-200{% elif pokemon.pokemon_id in game.guesses and pokemon.pokemon_id == game.answer.pokemon_id %}bg-green-200{% else %}{% endif %}">{{pokemon.name.capitalize()}}</a>
             {% endfor %}
         </div>
     </div>

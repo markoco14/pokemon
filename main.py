@@ -135,9 +135,6 @@ def guess_that_pokemon(request: Request, game_id: int, guess_pokemon_id: int):
     if not games.get(game_id):
         return RedirectResponse(url="/pokemon", status_code=303)
 
-    # if guess_pokemon_id == games[game_id]["answer"].pokemon_id:
-    #     print("You guessed right")
     games[game_id].guesses.append(guess_pokemon_id)
-    
 
     return RedirectResponse(url=f"/pokemon/play/{game_id}")
