@@ -32,29 +32,6 @@ def get_four_unique_numbers() -> List[int]:
 
     return random_numbers
 
-def get_four_pokemon(random_numbers: List[int]) -> List[Pokemon]:
-    pokemons = []
-    try:
-        connection = sqlite3.connect("pokemon.db")
-        cursor = connection.cursor()
-        for number in random_numbers:
-            cursor.execute(f"SELECT * FROM pokemon WHERE id = {number}")
-            row = cursor.fetchone()
-            pokemon = Pokemon(
-                name=row[1],
-                pokemon_id=row[2],
-                pokemon_order=row[3]
-            )
-            pokemons.append(pokemon)
-    except Exception as e:
-        print(f"There was an error: {e}")
-    finally:
-        if connection:
-            cursor.close()
-            connection.close()
-
-    return pokemons
-
 
 @app.get("/")
 async def root(request: Request):
@@ -85,7 +62,17 @@ async def pokemon_index(request: Request):
 async def pokemon_play(request: Request):
     game_id = random.randint(1000, 10001)
     random_numbers = get_four_unique_numbers()
-    pokemons = get_four_pokemon(random_numbers=random_numbers)
+    rows = queries.get_whos_that_pokemon(random_numbers=random_numbers)
+    
+    pokemons = []
+    for row in rows:
+        pokemon = Pokemon(
+                name=row[1],
+                pokemon_id=row[2],
+                pokemon_order=row[3]
+            )
+        pokemons.append(pokemon)
+
     answer = pokemons[random.randint(0,3)]
 
     games[game_id] = Game(
