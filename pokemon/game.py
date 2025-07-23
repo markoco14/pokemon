@@ -1,7 +1,7 @@
 import random
 import sqlite3
 
-from main import Pokemon
+from src.main import Pokemon
 
 def choose_pokemon():
     random_number = random.randint(1, 151)
