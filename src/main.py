@@ -1,7 +1,4 @@
 import random
-import sqlite3
-from dataclasses import dataclass
-from typing import List
 
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
@@ -10,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 
 from src import queries
 from src.types import Game, Pokemon
+from src.utils import get_four_unique_numbers
 
 app = FastAPI()
 
@@ -18,19 +16,6 @@ app.mount("/src/static", StaticFiles(directory="src/static"), name="static")
 templates = Jinja2Templates(directory="src/templates")
 
 games = {}
-
-
-def get_four_unique_numbers() -> List[int]:
-    unique = False
-    random_numbers = []
-    while unique == False:
-        random_number = random.randint(1, 151)
-        if random_number not in random_numbers:
-            random_numbers.append(random_number)
-        if len(random_numbers) == 4:
-            unique = True
-
-    return random_numbers
 
 
 @app.get("/")
@@ -63,7 +48,7 @@ async def pokemon_play(request: Request):
     game_id = random.randint(1000, 10001)
     random_numbers = get_four_unique_numbers()
     rows = queries.get_whos_that_pokemon(random_numbers=random_numbers)
-    
+
     pokemons = []
     for row in rows:
         pokemon = Pokemon(
