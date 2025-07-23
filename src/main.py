@@ -8,6 +8,9 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from src import queries
+from src.types import Game, Pokemon
+
 app = FastAPI()
 
 app.mount("/src/static", StaticFiles(directory="src/static"), name="static")
@@ -15,19 +18,7 @@ app.mount("/src/static", StaticFiles(directory="src/static"), name="static")
 templates = Jinja2Templates(directory="src/templates")
 
 games = {}
-@dataclass
-class Pokemon:
-    name: str
-    pokemon_id: int
-    pokemon_order: int
 
-@dataclass
-class Game:
-    id: int
-    answer: Pokemon
-    pokemons: List[Pokemon]
-    guesses: List[int]
-    finished: bool
 
 def get_four_unique_numbers() -> List[int]:
     unique = False
@@ -74,31 +65,16 @@ async def root(request: Request):
 
 @app.get("/pokemon")
 async def pokemon_index(request: Request):
-    try:
-        connection = sqlite3.connect('pokemon.db')
+    rows = queries.list_pokemon()
 
-        cursor = connection.cursor()
-        
-        cursor.execute("SELECT * FROM pokemon;")
-
-        rows = cursor.fetchall()
-
-        pokemons = []
-        for row in rows:
-            pokemon = Pokemon(
-                name=row[1],
-                pokemon_id=row[2],
-                pokemon_order=row[3]
-            )
-            pokemons.append(pokemon)
-
-    except Exception as e:
-        print(f"an error occured")
-
-    finally:
-        if connection:
-            cursor.close()
-            connection.close()
+    pokemons = []
+    for row in rows:
+        pokemon = Pokemon(
+            name=row[1],
+            pokemon_id=row[2],
+            pokemon_order=row[3]
+        )
+        pokemons.append(pokemon)
     
     return templates.TemplateResponse(
         request=request, name="pokemon/index.html", context={"pokemons": pokemons}
