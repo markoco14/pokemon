@@ -5,5 +5,5 @@ fastapi dev main.py
 
 Tailwind
 ```
-npx @tailwindcss/cli -i ./static/input.css -o ./static/output.css --watch
+npx @tailwindcss/cli -i ./src/static/input.css -o ./src/static/output.css --watch
 ```
