@@ -10,7 +10,7 @@ def list_pokemon():
         rows = cursor.fetchall()
         return rows
     except Exception as e:
-        print(f"an error occured")
+        raise Exception(f"an error occured: {e}") from e
     finally:
         if connection:
             cursor.close()

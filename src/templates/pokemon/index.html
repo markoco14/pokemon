@@ -15,9 +15,13 @@
         </section>
         <section class="mb-4">
             <h2 class="text-xl underline underline-offset-2">The Original Pokemon</h2>
-            {% for pokemon in pokemons %}
-                <p>{{pokemon.pokemon_id}} - {{pokemon.name.capitalize()}}</p>
-            {% endfor %}
+            {% if pokemons %}
+                {% for pokemon in pokemons %}
+                    <p>{{pokemon.pokemon_id}} - {{pokemon.name.capitalize()}}</p>
+                {% endfor %}
+            {% else %}
+                <p>There are no Pokemon in the database.</p>
+            {% endif %}
         </section>
     </div>
 {% endblock content %}
