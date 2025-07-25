@@ -34,7 +34,8 @@ async def pokemon_index(request: Request):
         pokemon = Pokemon(
             name=row[1],
             pokemon_id=row[2],
-            pokemon_order=row[3]
+            pokemon_order=row[3],
+            thumbnail=row[4]
         )
         pokemons.append(pokemon)
     
