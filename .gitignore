@@ -1,8 +1,6 @@
-node_modules
+/node_modules
 __pycache__
-venv
+/venv
 *.db
 output.css
 vendor
-notes.md
-images.txt
