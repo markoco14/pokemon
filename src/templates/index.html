@@ -16,14 +16,16 @@
         <section class="mb-4">
             <h2 class="text-xl underline underline-offset-2 mb-4">The Original Pokemon</h2>
             {% if pokemons %}
-                {% for pokemon in pokemons %}
-                    <p class="max-w-[400px] grid grid-cols-3 gap-2 px-4 py-1 mb-4 border rounded items-center justify-between text-xl">
-                        <span class="col-span-2">{{pokemon.name.capitalize()}}</span>
-                        <span class="col-span-1 flex justify-end">
-                            <img src="{{pokemon.thumbnail}}"  loading="lazy"/>
-                        </span>
-                    </p>
-                {% endfor %}
+                <ul class="grid sm:grid-cols-2 md:grid-cols-3 gap-x-2 gap-y-2">
+                    {% for pokemon in pokemons %}
+                        <li class="grid grid-cols-3 gap-2 px-4 py-1 border rounded items-center justify-between text-xl">
+                            <span class="col-span-2">{{pokemon.name.capitalize()}}</span>
+                            <span class="col-span-1 flex justify-end">
+                                <img src="{{pokemon.thumbnail}}"  loading="lazy"/>
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
             {% else %}
                 <p>There are no Pokemon in the database.</p>
             {% endif %}
