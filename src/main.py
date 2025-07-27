@@ -20,13 +20,6 @@ games = {}
 
 @app.get("/")
 async def root(request: Request):
-    return templates.TemplateResponse(
-        request=request, name="index.html", context={}
-    )
-
-
-@app.get("/pokemon")
-async def pokemon_index(request: Request):
     rows = queries.list_pokemon()
 
     pokemons = []
@@ -40,11 +33,12 @@ async def pokemon_index(request: Request):
         pokemons.append(pokemon)
     
     return templates.TemplateResponse(
-        request=request, name="pokemon/index.html", context={"pokemons": pokemons}
+        request=request, name="index.html", context={"pokemons": pokemons}
     )
 
 
-@app.get("/pokemon/play")
+
+@app.get("/whos-that-pokemon")
 async def pokemon_play(request: Request):
     game_id = random.randint(1000, 10001)
     random_numbers = get_four_unique_numbers()
@@ -70,23 +64,23 @@ async def pokemon_play(request: Request):
         finished=False
     )
 
-    return RedirectResponse(url=f"/pokemon/play/{game_id}")
+    return RedirectResponse(url=f"/whos-that-pokemon/{game_id}")
 
 
-@app.get("/pokemon/play/{game_id}")
+@app.get("/whos-that-pokemon/{game_id}")
 async def pokemon_play(request: Request, game_id: int):
     if game_id not in games:
-        return RedirectResponse(url="/pokemon", status_code=303)  
+        return RedirectResponse(url="/", status_code=303)  
 
     return templates.TemplateResponse(
-        request=request, name="pokemon/play.html", context={"game": games[game_id]}
+        request=request, name="whos-that-pokemon.html", context={"game": games[game_id]}
     )
 
 
-@app.get("/pokemon/play/{game_id}/{guess_pokemon_id}")
+@app.get("/whos-that-pokemon/{game_id}/{guess_pokemon_id}")
 def guess_that_pokemon(request: Request, game_id: int, guess_pokemon_id: int):
     if not games.get(game_id):
-        return RedirectResponse(url="/pokemon", status_code=303)
+        return RedirectResponse(url="/", status_code=303)
 
     if guess_pokemon_id not in games[game_id].guesses:
         games[game_id].guesses.append(guess_pokemon_id)
@@ -94,4 +88,4 @@ def guess_that_pokemon(request: Request, game_id: int, guess_pokemon_id: int):
     if guess_pokemon_id == games[game_id].answer.pokemon_id:
         games[game_id].finished = True
     
-    return RedirectResponse(url=f"/pokemon/play/{game_id}")
+    return RedirectResponse(url=f"/whos-that-pokemon/{game_id}")

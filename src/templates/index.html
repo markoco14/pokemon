@@ -1,10 +1,32 @@
 {% extends "base.html" %}
 
-{% block title %}<title>Root</title>{% endblock title %}
+{% block title %}<title>Pokemon</title>{% endblock title %}
 
 {% block content %}
     <div class="max-w-[800px] mx-auto px-2">
-        <h1 class="text-xl">Hello World</h1>
-        <a href="/pokemon">Pokemon</a>
+        <section class="mb-4">
+            <h1 class="text-2xl underline underline-offset-2">ESL Pokemon Games</h1>
+            <p>Welcome to ESL Pokemon Games. Our goal is to make the most games and the best games for ESl students of all ages to learn about Pokemon. Many of your students will know most of the Pokemon in their own language, so we help them learn the Pokemon's English names while playing games in the classroom. They are guaranteed to go home and annoy their parents with all the new, useful English words they learned today. Enjoy :)</p>
+        </section>
+        <section class="mb-4">
+            <h2 class="text-xl underline underline-offset-2">Who's That Pokemon</h2>
+            <p class="mb-2">Test your knowledge of the original 151 Pokemon in this multiple choice Pokemon quiz.</p>
+            <a href="/whos-that-pokemon" class="inline-block px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 active:scale-95 underline underline-offset-2">Play Now</a>
+        </section>
+        <section class="mb-4">
+            <h2 class="text-xl underline underline-offset-2 mb-4">The Original Pokemon</h2>
+            {% if pokemons %}
+                {% for pokemon in pokemons %}
+                    <p class="max-w-[400px] grid grid-cols-3 gap-2 px-4 py-1 mb-4 border rounded items-center justify-between text-xl">
+                        <span class="col-span-2">{{pokemon.name.capitalize()}}</span>
+                        <span class="col-span-1 flex justify-end">
+                            <img src="{{pokemon.thumbnail}}"  loading="lazy"/>
+                        </span>
+                    </p>
+                {% endfor %}
+            {% else %}
+                <p>There are no Pokemon in the database.</p>
+            {% endif %}
+        </section>
     </div>
 {% endblock content %}
