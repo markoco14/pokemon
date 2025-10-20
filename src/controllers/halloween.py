@@ -45,8 +45,8 @@ class MonsterEditPage(TypedDict):
     monster: Monster
     name_error: str
 
-async def monster_edit(request: Request, name: str):
-    monster = Monster.get_by_name(name=name)
+async def monster_edit(request: Request, monster_id: str):
+    monster = Monster.get(monster_id=monster_id)
 
     return templates.TemplateResponse(
         request=request,
@@ -57,14 +57,15 @@ async def monster_edit(request: Request, name: str):
         )
     )
 
-async def monster_update(request: Request, name: str, monster_name: Annotated[str, Form()]):
+async def monster_update(request: Request, monster_id: str, name: Annotated[str, Form()]):
     """Updates a monster resource."""
-    monster = Monster.get_by_name(name=name)
+    monster = Monster.get(monster_id=monster_id)
+    new_monster_name = name
 
     if not monster:
         return Response(status_code=200, headers={"hx-redirect": "/halloween"})
 
-    if monster_name == "":
+    if new_monster_name == "":
         name_error = "The monster needs to have a name"
         return templates.TemplateResponse(
             request=request,
@@ -75,7 +76,18 @@ async def monster_update(request: Request, name: str, monster_name: Annotated[st
             )
         )
     
-    monster.update_name(name=monster_name)
+    if new_monster_name == monster.name:
+        name_error = f"{new_monster_name} is already the monster's name"
+        return templates.TemplateResponse(
+            request=request,
+            name="halloween/monsters/edit.html",
+            context=MonsterEditPage(
+                monster=monster,
+                name_error=name_error
+            )
+        )
+    
+    monster.update_name(name=new_monster_name)
 
-    return Response(status_code=200, headers={"hx-redirect": f"/halloween/monsters/{monster_name}/edit"})
+    return Response(status_code=200, headers={"hx-redirect": f"/halloween/monsters/{monster.monster_id}/edit"})
     

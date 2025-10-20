@@ -16,8 +16,8 @@ routes = [
 
     ("GET", "/halloween", halloween.index),
     ("GET", "/halloween/monsters/{monster_id}", halloween.monster_show),
-    ("GET", "/halloween/monsters/{name}/edit", halloween.monster_edit),
-    ("PUT", "/halloween/monsters/{name}", halloween.monster_update),
+    ("GET", "/halloween/monsters/{monster_id}/edit", halloween.monster_edit),
+    ("PUT", "/halloween/monsters/{monster_id}", halloween.monster_update),
 
 ]
 
