@@ -30,8 +30,8 @@ async def index(request: Request):
 class MonsterShowPage(TypedDict):
     monster: Monster
 
-async def monster_show(request: Request, name: str):
-    monster = Monster.get_by_name(name=name)
+async def monster_show(request: Request, monster_id: str):
+    monster = Monster.get(monster_id=monster_id)
 
     return templates.TemplateResponse(
         request=request,

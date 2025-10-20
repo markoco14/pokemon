@@ -12,7 +12,7 @@
             <h2>Meet the Halloween Monsters</h2>
             <ul class="monster-list">
                 {% for monster in monsters  %}
-                    <li class="list-item"><a href="/halloween/monsters/{{monster.name}}">{{monster.name.capitalize()}}</a></li>
+                    <li class="list-item"><a href="/halloween/monsters/{{monster.monster_id}}">{{monster.name.capitalize()}}</a></li>
                 {% endfor %}
             </ul>
         </section>

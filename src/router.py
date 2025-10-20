@@ -15,7 +15,7 @@ routes = [
     ("GET", "/whos-that-pokemon/{game_id}/{guess_pokemon_id}", pokemon.guess_that_pokemon),
 
     ("GET", "/halloween", halloween.index),
-    ("GET", "/halloween/monsters/{name}", halloween.monster_show),
+    ("GET", "/halloween/monsters/{monster_id}", halloween.monster_show),
     ("GET", "/halloween/monsters/{name}/edit", halloween.monster_edit),
     ("PUT", "/halloween/monsters/{name}", halloween.monster_update),
 
