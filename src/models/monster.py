@@ -78,6 +78,15 @@ class Monster:
                 thumbnail_img_path=row["thumbnail_img_path"]
             )
         
+    def update(self, name: str, large_img_path: str):
+        with sqlite3.connect("esl.db") as conn:
+            conn.execute("PRAGMA journal_mode = WAL;")
+            conn.execute("PRAGMA foreign_keys = ON;")
+            conn.row_factory = sqlite3.Row
+
+            cursor = conn.cursor()
+            cursor.execute("UPDATE monster SET name=?, large_img_path=? WHERE monster_id=?;", (name, large_img_path, self.monster_id))
+            
     def update_name(self, name: str):
         with sqlite3.connect("esl.db") as conn:
             conn.execute("PRAGMA journal_mode = WAL;")

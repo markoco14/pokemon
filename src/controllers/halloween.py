@@ -57,7 +57,12 @@ async def monster_edit(request: Request, monster_id: str):
         )
     )
 
-async def monster_update(request: Request, monster_id: str, name: Annotated[str, Form()]):
+async def monster_update(
+    request: Request,
+    monster_id: str,
+    name: Annotated[str, Form()],
+    large_img: Annotated[str, Form()]
+    ):
     """Updates a monster resource."""
     monster = Monster.get(monster_id=monster_id)
     new_monster_name = name
@@ -76,18 +81,7 @@ async def monster_update(request: Request, monster_id: str, name: Annotated[str,
             )
         )
     
-    if new_monster_name == monster.name:
-        name_error = f"{new_monster_name} is already the monster's name"
-        return templates.TemplateResponse(
-            request=request,
-            name="halloween/monsters/edit.html",
-            context=MonsterEditPage(
-                monster=monster,
-                name_error=name_error
-            )
-        )
-    
-    monster.update_name(name=new_monster_name)
+    monster.update(name=new_monster_name, large_img_path=large_img)
 
     return Response(status_code=200, headers={"hx-redirect": f"/halloween/monsters/{monster.monster_id}/edit"})
     
