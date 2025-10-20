@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Halloween Monsters | {{monster.name.capitalize()}}</title>{% endblock title %}
+
+{% block content %}
+    <div class="max-w-[800px] mx-auto px-2">
+        <section class="mb-4">
+            <h1 class="text-2xl underline underline-offset-2">{{monster.name.capitalize()}}</h1>
+        </section>
+    </div>
+{% endblock content %}
