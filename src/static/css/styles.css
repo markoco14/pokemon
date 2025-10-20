@@ -1,0 +1,35 @@
+@view-transition {
+    navigation: auto;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+.monster-list {
+    margin-top: 1rem;
+
+    .list-item {
+        padding: 0.5rem 1rem;
+        border: solid, black, 1px;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    :last-child {
+        margin-bottom: 0;
+    }
+}
+
+.form-item {
+    display: grid;
+}
+
+form {
+    .error {
+        min-height: 24px;
+        color: red;
+        text-align: right;
+    }
+}

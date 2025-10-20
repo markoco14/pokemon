@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Halloween Monsters | {{monster.name.capitalize()}}</title>{% endblock title %}
+
+{% block content %}
+    <div class="max-w-[800px] mx-auto px-2">
+        <section class="mb-4">
+            <h1 class="text-2xl underline underline-offset-2">{{monster.name.capitalize()}}</h1>
+            <a href="/halloween">Back</a> <a href="/halloween/monsters/{{monster.monster_id}}/edit">Edit</a>  
+            {% if monster.large_img_path %}
+                <img src="{{monster.large_img_path}}" width="600px" heigh="600px" />
+            {% endif %}
+        </section>
+    </div>
+{% endblock content %}

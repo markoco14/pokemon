@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Halloween</title>{% endblock title %}
+
+{% block content %}
+    <div class="max-w-[800px] mx-auto px-2">
+        <section class="mb-4">
+            <h1 class="text-2xl underline underline-offset-2">ESL Halloween</h1>
+            <p>Learn evrything you need to know about Halloween vocabulary.</p>
+        </section>
+        <section class="mb-4">
+            <h2>Meet the Halloween Monsters</h2>
+            {% if monsters %}
+            <ul class="monster-list">
+                {% for monster in monsters  %}
+                    <li class="list-item">
+                        {% if monster.large_img_path %}
+                            <img src="{{monster.large_img_path}}" width="100px" heigh="100px" />
+                        {% endif %}
+                        <a href="/halloween/monsters/{{monster.monster_id}}">{{monster.name.capitalize()}}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>Nothing to see here.</p>
+            {% endif %}
+        </section>
+    </div>
+{% endblock content %}
