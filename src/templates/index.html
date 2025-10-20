@@ -5,30 +5,22 @@
 {% block content %}
     <div class="max-w-[800px] mx-auto px-2">
         <section class="mb-4">
-            <h1 class="text-2xl underline underline-offset-2">ESL Pokemon Games</h1>
-            <p>Welcome to ESL Pokemon Games. Our goal is to make the most games and the best games for ESl students of all ages to learn about Pokemon. Many of your students will know most of the Pokemon in their own language, so we help them learn the Pokemon's English names while playing games in the classroom. They are guaranteed to go home and annoy their parents with all the new, useful English words they learned today. Enjoy :)</p>
-        </section>
-        <section class="mb-4">
-            <h2 class="text-xl underline underline-offset-2">Who's That Pokemon</h2>
-            <p class="mb-2">Test your knowledge of the original 151 Pokemon in this multiple choice Pokemon quiz.</p>
-            <a href="/whos-that-pokemon" class="inline-block px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 active:scale-95 underline underline-offset-2">Play Now</a>
-        </section>
-        <section class="mb-4">
-            <h2 class="text-xl underline underline-offset-2 mb-4">The Original Pokemon</h2>
-            {% if pokemons %}
-                <ul class="grid sm:grid-cols-2 md:grid-cols-3 gap-x-2 gap-y-2">
-                    {% for pokemon in pokemons %}
-                        <li class="grid grid-cols-3 gap-2 px-4 py-1 border rounded items-center justify-between text-xl">
-                            <span class="col-span-2">{{pokemon.name.capitalize()}}</span>
-                            <span class="col-span-1 flex justify-end">
-                                <img src="{{pokemon.thumbnail}}"  loading="lazy"/>
-                            </span>
-                        </li>
-                    {% endfor %}
+            <h1 class="text-2xl underline underline-offset-2">ESL Games</h1>
+            <p>Welcome top ESL Games. Choose a topic below and learn something new today.</p>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="/pokemon">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/1200px-International_Pok%C3%A9mon_logo.svg.png" width="300px" height="150px"/>
+                        </a>
+                    </li>
+                    {# <li>
+                        <a href="/halloween">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFl-xbSrY1e97p_CmYPf_WLUXoY4FMgL1qyw&s" width="300px" height="150px"/>
+                        </a>
+                    </li> #}
                 </ul>
-            {% else %}
-                <p>There are no Pokemon in the database.</p>
-            {% endif %}
+            </nav>
         </section>
     </div>
 {% endblock content %}

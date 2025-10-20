@@ -18,6 +18,24 @@ templates = Jinja2Templates(directory="src/templates")
 games = {}
 
 
+async def index(request: Request):
+    rows = queries.list_pokemon()
+
+    pokemons = []
+    for row in rows:
+        pokemon = Pokemon(
+            name=row[1],
+            pokemon_id=row[2],
+            pokemon_order=row[3],
+            thumbnail=row[4]
+        )
+        pokemons.append(pokemon)
+    
+    return templates.TemplateResponse(
+        request=request, name="pokemon/index.html", context={"pokemons": pokemons}
+    )
+
+
 async def whos_that(request: Request):
     game_id = random.randint(1000, 10001)
     random_numbers = get_four_unique_numbers()
