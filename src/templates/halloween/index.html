@@ -8,5 +8,13 @@
             <h1 class="text-2xl underline underline-offset-2">ESL Halloween</h1>
             <p>Learn evrything you need to know about Halloween vocabulary.</p>
         </section>
+        <section class="mb-4">
+            <h2>Meet the Halloween Monsters</h2>
+            <ul class="monster-list">
+                {% for monster in monsters  %}
+                    <li class="list-item"><a href="/halloween/monsters/{{monster.name}}">{{monster.name.capitalize()}}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
     </div>
 {% endblock content %}
