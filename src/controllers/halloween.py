@@ -85,3 +85,16 @@ async def monster_update(
 
     return Response(status_code=200, headers={"hx-redirect": f"/halloween/monsters/{monster.monster_id}/edit"})
     
+class MonsterTeachPage(TypedDict):
+    monsters: list[Monster]
+
+async def monster_teach(request: Request):
+    monsters = Monster.list()
+    
+    return templates.TemplateResponse(
+            request=request,
+            name="halloween/monsters/teach.html",
+            context=MonsterTeachPage(
+                monsters=monsters
+            )
+        )
