@@ -1,4 +1,4 @@
-from models.monster import Monster
+from src.models.monster import Monster
 
 
 monsters = ["vampire", "zombie", "mummy", "werewolf", "witch", "ghost", "skeleton", "jack-o-lantern", "scarecrow"]
