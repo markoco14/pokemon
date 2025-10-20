@@ -41,3 +41,21 @@ class Monster:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO monster (name) VALUES (?);", (name, ))
             return cursor.lastrowid
+        
+    @classmethod
+    def get_by_name(cls, name: str):
+        with sqlite3.connect("esl.db") as conn:
+            conn.execute("PRAGMA journal_mode = WAL;")
+            conn.execute("PRAGMA foreign_keys = ON;")
+            conn.row_factory = sqlite3.Row
+
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM monster WHERE name=?;", (name, ))
+            row = cursor.fetchone()
+
+            return Monster(
+                monster_id=row["monster_id"],
+                name=row["name"],
+                large_img_path=row["large_img_path"],
+                thumbnail_img_path=row["thumbnail_img_path"]
+            )
