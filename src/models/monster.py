@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import random
 import sqlite3
 
 
@@ -59,6 +60,30 @@ class Monster:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO monster (name, large_img_path) VALUES (?, ?);", (name, large_img_path))
             return cursor.lastrowid
+        
+    @classmethod
+    def get_random(cls):
+        monsters = Monster.list()
+        number_of_monsters = len(monsters)
+        random_index = random.randint(1, number_of_monsters)
+
+        with sqlite3.connect("esl.db") as conn:
+            conn.execute("PRAGMA journal_mode = WAL;")
+            conn.execute("PRAGMA foreign_keys = ON;")
+            conn.row_factory = sqlite3.Row
+
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM monster WHERE monster_id=?;", (random_index, ))
+            row = cursor.fetchone()
+
+            monster = Monster(
+                monster_id=row["monster_id"],
+                name=row["name"],
+                large_img_path=row["large_img_path"],
+                thumbnail_img_path=row["thumbnail_img_path"]
+            )
+                
+            return monster
         
     @classmethod
     def get_by_name(cls, name: str):

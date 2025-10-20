@@ -9,13 +9,18 @@
             <p>Learn evrything you need to know about Halloween vocabulary.</p>
         </section>
         <section class="mb-4">
+            <a href="/halloween/monsters/teach">Teach</a>
+        </section>
+        <section class="mb-4">
             <h2>Meet the Halloween Monsters</h2>
             {% if monsters %}
             <ul class="monster-list">
                 {% for monster in monsters  %}
                     <li class="list-item">
                         {% if monster.large_img_path %}
-                            <img src="{{monster.large_img_path}}" width="100px" heigh="100px" />
+                            <div class="image-container">
+                                <img src="{{monster.large_img_path}}" width="100px" height="100px" />
+                            </div>
                         {% endif %}
                         <a href="/halloween/monsters/{{monster.monster_id}}">{{monster.name.capitalize()}}</a>
                     </li>
