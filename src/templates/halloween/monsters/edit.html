@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Halloween Monsters | Edit {{monster.name.capitalize()}}</title>{% endblock title %}
+
+{% block content %}
+    <div class="max-w-[800px] mx-auto px-2">
+        <section class="mb-4">
+            <h1 class="text-2xl underline underline-offset-2">Edit {{monster.name.capitalize()}}</h1>
+            <a href="/halloween/monsters/{{monster.name}}">Back</a>
+            <noscript>Please allow JavaScript to use this form</noscript>
+            <form hx-put="/halloween/monsters/{{monster.name}}" hx-target="body">
+                <div class="form-item">
+                    <label for="name">Name</label>
+                    <input id="name" name="monster_name" type="text" value="{{monster.name}}" autocomplete="none"/>
+                    <p class="error">{{name_error}}</p>
+                </div>
+                <button type="submit">Save</button>
+            </form>
+        </section>
+    </div>
+{% endblock content %}
