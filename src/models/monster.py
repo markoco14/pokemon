@@ -51,13 +51,13 @@ class Monster:
             )
 
     @classmethod
-    def create(cls, name: str):
+    def create(cls, name: str, large_img_path: str):
         with sqlite3.connect("esl.db") as conn:
             conn.execute("PRAGMA journal_mode = WAL;")
             conn.execute("PRAGMA foreign_keys = ON;")
 
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO monster (name) VALUES (?);", (name, ))
+            cursor.execute("INSERT INTO monster (name, large_img_path) VALUES (?, ?);", (name, large_img_path))
             return cursor.lastrowid
         
     @classmethod

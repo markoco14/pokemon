@@ -10,6 +10,7 @@
         </section>
         <section class="mb-4">
             <h2>Meet the Halloween Monsters</h2>
+            {% if monsters %}
             <ul class="monster-list">
                 {% for monster in monsters  %}
                     <li class="list-item">
@@ -20,6 +21,9 @@
                     </li>
                 {% endfor %}
             </ul>
+            {% else %}
+            <p>Nothing to see here.</p>
+            {% endif %}
         </section>
     </div>
 {% endblock content %}
