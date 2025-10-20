@@ -1,3 +1,7 @@
+@view-transition {
+    navigation: auto;
+}
+
 h2 {
     font-size: 1.5rem;
 }
@@ -15,5 +19,17 @@ h2 {
 
     :last-child {
         margin-bottom: 0;
+    }
+}
+
+.form-item {
+    display: grid;
+}
+
+form {
+    .error {
+        min-height: 24px;
+        color: red;
+        text-align: right;
     }
 }
