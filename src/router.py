@@ -13,8 +13,9 @@ routes = [
     ("GET", "/whos-that-pokemon", pokemon.whos_that),
     ("GET", "/whos-that-pokemon/{game_id}", pokemon.pokemon_play),
     ("GET", "/whos-that-pokemon/{game_id}/{guess_pokemon_id}", pokemon.guess_that_pokemon),
-    
+
     ("GET", "/halloween", halloween.index),
+    ("GET", "/halloween/monsters/{name}", halloween.monster_show),
 ]
 
 for method, path, handler in routes:
