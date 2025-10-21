@@ -61,11 +61,6 @@ form {
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     width: 100%;
-
-    p {
-        font-size: 4rem;
-        text-align: center;
-    }
 }
 
 .slide {
@@ -76,6 +71,38 @@ form {
 }
 
 .slide-name {
+    font-size: 3rem;
+    text-align: center;
     overflow-x: auto;
     text-wrap: nowrap;
 }
+
+.see-say-name {
+    font-size: 3rem;
+    text-align: center;
+    overflow-x: auto;
+    text-wrap: nowrap;
+    margin-bottom: 1rem;
+}
+
+.btn-container {
+    text-align: center;
+}
+
+.next-btn {
+    display: inline-block;
+    background-color: blue;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.next-btn:hover {
+    background-color: darkblue;
+}
+
+.next-btn:active {
+    background-color: midnightblue;
+}
+
+
