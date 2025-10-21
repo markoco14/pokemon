@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Halloween Monsters | Teach</title>{% endblock title %}
+
+{% block content %}
+    <div class="max-w-[800px] mx-auto px-2">
+        <section class="mb-4">
+            {% if monster %}
+            <ul class="carousel">
+                <li class="slide">
+                    <div class="image-container large">
+                        <img src="{{monster.large_img_path}}" />
+                    </div>
+                    <p class="slide-name">{{monster.name.capitalize()}}</p>
+                </li>
+            </ul>
+            <a href="/halloween/monsters/see-and-say?monster={{next_monster.name}}" autofocus="true">Next Monster</a>
+            {% else %}
+            <p>No monster to see. Check the database.</p>
+            {% endif %}
+        </section>
+    </div>
+{% endblock content %}

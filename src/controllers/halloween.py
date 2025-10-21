@@ -1,6 +1,7 @@
 from typing import Annotated, TypedDict
 from fastapi import FastAPI, Form, Request, Response
 
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -98,3 +99,23 @@ async def monster_teach(request: Request):
                 monsters=monsters
             )
         )
+
+async def monster_see_and_say(request: Request):
+    if not request.query_params.get("monster"):
+        monster = Monster.get_random()
+        return RedirectResponse(status_code=303, url=f"/halloween/monsters/see-and-say?monster={monster.name}")
+    
+    monster = Monster.get_by_name(name=request.query_params.get("monster"))
+
+    next_monster = Monster.get_random()
+    while next_monster.name == monster.name:
+        next_monster = Monster.get_random()
+    
+    return templates.TemplateResponse(
+        request=request,
+        name=f"halloween/monsters/see-and-say.html",
+        context={
+            "monster": monster,
+            "next_monster": next_monster
+        }
+    )
