@@ -2,8 +2,48 @@
     navigation: auto;
 }
 
+body {
+    min-height: 100vh;
+    overflow-y: scroll;
+}
+
+main {
+    padding-bottom: 48px;
+}
+
 h2 {
     font-size: 1.5rem;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    height: 48px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    background-color: rgb(255,224,31);
+}
+
+.header__wrapper {
+    width: 100%;
+    max-width: 800px;
+    margin-inline: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-inline: 8px;
+
+    span {
+        font-size: 20px;
+        text-transform: uppercase;
+    }
+}
+
+nav ul {
+    display: flex;
+    gap: 1rem;
 }
 
 .monster-list {
