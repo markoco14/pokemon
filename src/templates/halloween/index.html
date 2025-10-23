@@ -23,12 +23,14 @@
             <ul class="monster-list">
                 {% for monster in monsters  %}
                     <li class="list-item">
+                        <a href="/halloween/monsters/{{monster.monster_id}}">
                         {% if monster.large_img_path %}
                             <div class="image-container">
                                 <img src="{{monster.large_img_path}}" width="100px" height="100px" />
                             </div>
                         {% endif %}
-                        <a href="/halloween/monsters/{{monster.monster_id}}">{{monster.name.capitalize()}}</a>
+                        {{monster.name.capitalize()}}
+                        </a>
                     </li>
                 {% endfor %}
             </ul>
