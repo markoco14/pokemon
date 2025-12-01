@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}<title>Teach Christmas | ESL Games</title>{% endblock title %}
+
+{% block content %}
+<div class="wrapper">
+    <ul class="carousel">
+        {% for word in vocab_set %}
+        <li class="slide">
+            <div class="image-container large">
+                <img src="{{ word.large_img_path}}" alt="{{ word.alt_text }}"/>
+            </div>
+            <p class="slide-name">{{ word.name }}</p>
+        </li>    
+        {% endfor %}
+    </ul>
+</div>
+{% endblock content %}

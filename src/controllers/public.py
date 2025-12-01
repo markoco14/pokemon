@@ -9,7 +9,7 @@ app = FastAPI()
 
 app.mount("/src/static", StaticFiles(directory="src/static"), name="static")
 
-templates = Jinja2Templates(directory="src/templates")
+from src.templates import templates
 
 games = {}
 
