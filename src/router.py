@@ -23,6 +23,7 @@ routes = [
 
     ("GET", "/christmas",                                       christmas.index),
     ("GET", "/christmas/teach",                                 christmas.teach),
+    ("GET", "/christmas/see-and-say",                           christmas.see_and_say),
 ]
 
 for method, path, handler in routes:

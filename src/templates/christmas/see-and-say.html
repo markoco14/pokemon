@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Christmas | See and Say</title>{% endblock title %}
+
+{% block content %}
+<div class="wrapper">
+        {% if word %}
+        <div class="image-container large">
+            <img src="{{word.large_img_path}}" />
+        </div>
+        <p class="see-say-name">{{word.name.capitalize()}}</p>
+        <div class="btn-container">
+            <a href="/christmas/see-and-say?word={{next_word.name}}" autofocus="true" class="next-btn">Next Word</a>
+        </div>
+        {% else %}
+        <p>No words to see. Check the database.</p>
+        {% endif %}
+</div>
+{% endblock content %}
