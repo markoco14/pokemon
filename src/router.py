@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from src.controllers import halloween, pokemon, public
+from src.controllers import halloween, pokemon, public, christmas
 
 
 router = APIRouter()
@@ -21,6 +21,7 @@ routes = [
     ("GET", "/halloween/monsters/{monster_id}/edit",            halloween.monster_edit),
     ("PUT", "/halloween/monsters/{monster_id}",                 halloween.monster_update),
 
+    ("GET", "/christmas",                                       christmas.index),
 ]
 
 for method, path, handler in routes:
