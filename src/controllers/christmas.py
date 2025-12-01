@@ -16,3 +16,10 @@ async def index(request: Request):
         name="christmas/index.html",
         context={}
     )
+
+async def teach(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="christmas/teach.html",
+        context={}
+    )

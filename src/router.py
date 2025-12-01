@@ -22,6 +22,7 @@ routes = [
     ("PUT", "/halloween/monsters/{monster_id}",                 halloween.monster_update),
 
     ("GET", "/christmas",                                       christmas.index),
+    ("GET", "/christmas/teach",                                 christmas.teach),
 ]
 
 for method, path, handler in routes:
