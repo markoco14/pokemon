@@ -1,3 +1,4 @@
+import sqlite3
 from typing import Annotated, TypedDict
 from fastapi import FastAPI, Form, Request, Response
 
@@ -18,8 +19,18 @@ async def index(request: Request):
     )
 
 async def teach(request: Request):
+    with sqlite3.connect("esl.db") as conn:
+        conn.execute("PRAGMA journal_mode = WAL;")
+        conn.execute("PRAGMA foreign_keys = ON;")
+        conn.row_factory = sqlite3.Row
+
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM christmas;")
+        vocab_set = cursor.fetchall()
+
+    
     return templates.TemplateResponse(
         request=request,
         name="christmas/teach.html",
-        context={}
+        context={"vocab_set": vocab_set}
     )
