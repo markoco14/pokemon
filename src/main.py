@@ -10,6 +10,4 @@ app.include_router(app_router)
 
 app.mount("/src/static", StaticFiles(directory="src/static"), name="static")
 
-templates = Jinja2Templates(directory="src/templates")
-
 games = {}
