@@ -180,6 +180,18 @@ form {
     font-size: 2rem;
 }
 
+.button-bar {
+    margin-bottom: 1rem;
+}
+
+.button {
+    display: inline-block;
+    background-color: blue;
+    color: white;
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
 .spelling-grid {
     display: grid;
     grid-template-columns: 
@@ -188,10 +200,8 @@ form {
             minmax(300px, 1fr)
         );
     gap: 1rem;
-
     font-size: clamp(2.5rem, 4vw, 4rem);
     letter-spacing: 2px;
-
 }
 
 .spelling-grid__cell {
@@ -200,4 +210,8 @@ form {
     border-radius: 0.25rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     text-align: center;
+}
+
+.missing-letter {
+    color: red;
 }
