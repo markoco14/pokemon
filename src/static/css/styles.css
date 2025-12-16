@@ -215,3 +215,27 @@ form {
 .missing-letter {
     color: red;
 }
+
+.input-group {
+    display: grid;
+    margin-bottom: 1rem;
+}
+
+.label {
+    font-weight: 600;
+}
+
+.input {
+    border: 1px solid black;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.form-btn {
+    background-color: blue;
+    color: white;
+    display: inline-block;
+    padding: 0.5rem;
+    min-width: 100px;
+    border-radius: 0.25rem;
+}

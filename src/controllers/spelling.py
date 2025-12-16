@@ -1,15 +1,49 @@
 import random
+import sqlite3
+from types import SimpleNamespace
 
 from fastapi import Request
+from fastapi.responses import RedirectResponse
 
 from src.templates import templates
 
 async def index(request: Request):
+    with sqlite3.connect("esl.db") as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM spelling_list;")
+        spelling_lists = [SimpleNamespace(**row) for row in cursor.fetchall()]
+
     return templates.TemplateResponse(
         request=request,
         name="spelling/index.html",
+        context={"spelling_lists": spelling_lists}
+    )
+
+async def lists_new(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="spelling/lists/new.html",
         context={}
     )
+
+async def lists_create(request: Request):
+    form_data = await request.form()
+
+    list_name = form_data.get("list_name")
+    if not list_name:
+        return RedirectResponse(url="/spelling/lists/new", status_code=303)
+
+    try:
+        with sqlite3.connect("esl.db") as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO spelling_list (name) VALUES (?);", (list_name, ))
+    except Exception as e:
+        print(f"something went wrong storing spelling list: {e}")
+        return RedirectResponse(url="/spelling/lists/new", status_code=303)
+    
+    return RedirectResponse(url="/spelling", status_code=303)
 
 async def missing_letters(request: Request):
 

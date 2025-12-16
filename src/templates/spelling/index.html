@@ -7,6 +7,17 @@
         <section class="mb-4">
             <h1 class="heading">Spelling</h1>
             <a href="/spelling/missing-letters">Missing Letters</a>
+            <h2>Lists</h2>
+            <a href="/spelling/lists/new">New list</a>
+            {% if not spelling_lists %}
+            <p>You haven't made any spelling lists yet.</p>
+            {% else %}
+            <ul>
+                {% for list in spelling_lists %}
+                <li>{{ list.name }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
         </section>
     </div>
 {% endblock content %}
