@@ -221,6 +221,12 @@ form {
     margin-bottom: 1rem;
 }
 
+.multi-input-group {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
 .label {
     font-weight: 600;
 }

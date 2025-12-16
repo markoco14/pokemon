@@ -29,16 +29,29 @@ async def lists_new(request: Request):
 
 async def lists_create(request: Request):
     form_data = await request.form()
-
+    
     list_name = form_data.get("list_name")
     if not list_name:
         return RedirectResponse(url="/spelling/lists/new", status_code=303)
+    
+    words = form_data.getlist("words")
+    for word in words:
+        if not word:
+            return RedirectResponse(url="/spelling/lists/new", status_code=303)
 
     try:
         with sqlite3.connect("esl.db") as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             cursor.execute("INSERT INTO spelling_list (name) VALUES (?);", (list_name, ))
+            spelling_list_id = cursor.lastrowid
+
+            words_to_insert = []
+            for word in words:
+                words_to_insert.append((word, spelling_list_id))
+            
+            cursor.executemany("INSERT INTO spelling_list_word (word, list_id) VALUES (?, ?);", words_to_insert)
+            conn.commit()
     except Exception as e:
         print(f"something went wrong storing spelling list: {e}")
         return RedirectResponse(url="/spelling/lists/new", status_code=303)
