@@ -58,9 +58,16 @@ async def lists_create(request: Request):
     
     return RedirectResponse(url="/spelling", status_code=303)
 
-async def missing_letters(request: Request):
+async def missing_letters(request: Request, list_id: int):
+    with sqlite3.connect("esl.db") as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
 
-    words = ["window", "clock", "door", "house", "roof", "chimney"]
+        cursor.execute("SELECT * FROM spelling_list WHERE list_id = ?;", (list_id, ))
+        list = cursor.fetchone()
+        
+        cursor.execute("SELECT * FROM spelling_list_word WHERE list_id = ?;", (list_id, ))
+        words = [SimpleNamespace(**row) for row in cursor.fetchall()]
 
     word_order = request.query_params.get("order") if request.query_params.get("order") else None
     
@@ -70,22 +77,21 @@ async def missing_letters(request: Request):
     num_of_missing_letters = int(request.query_params.get("letters")) if request.query_params.get("letters") else None
 
     if num_of_missing_letters:
-        words_with_missing_letters = []
-
         for word in words:
-            letter_index = random.randrange(len(word))
-            letter = word[letter_index]
-            words_with_missing_letters.append(word.replace(letter,"_", 1))
+            whole_word = word.word
+            letter_index = random.randrange(len(whole_word))
+            letter = whole_word[letter_index]
+            word.word = whole_word.replace(letter,"_", 1)
 
         return templates.TemplateResponse(
             request=request,
             name="spelling/missing-letters.html",
-            context={"words": words_with_missing_letters}
+            context={"list": list, "words": words}
         )
 
 
     return templates.TemplateResponse(
         request=request,
         name="spelling/missing-letters.html",
-        context={"words": words}
+        context={"list": list, "words": words}
     )

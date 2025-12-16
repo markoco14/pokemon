@@ -6,13 +6,13 @@
 <div class="wrapper">
     <h1 class="heading">Missing Letters</h1>
     <div class="button-bar">
-        <a href="/spelling/missing-letters" class="button">No missing letters</a>
-        <a href="/spelling/missing-letters?letters=1" class="button">1 missing letter</a>
+        <a href="/spelling/missing-letters/{{ list.list_id }}" class="button">No missing letters</a>
+        <a href="/spelling/missing-letters/{{ list.list_id }}?letters=1" class="button">1 missing letter</a>
     </div>
     <div class="spelling-grid">
         {%- for word in words -%}
         <p class="spelling-grid__cell">
-            {%- for letter in word -%}
+            {%- for letter in word.word -%}
             {%- if letter == "_" -%}
             <span class="missing-letter">{{ letter }}</span>
             {%- else -%}

@@ -26,8 +26,8 @@ routes = [
     ("GET",     "/christmas/see-and-say",                           christmas.see_and_say),
 
     ("GET",     "/spelling",                                        spelling.index),
-    ("GET",     "/spelling/missing-letters",                        spelling.missing_letters),
-    
+    ("GET",     "/spelling/missing-letters/{list_id}",              spelling.missing_letters),
+
     ("GET",     "/spelling/lists/new",                              spelling.lists_new),
     ("POST",    "/spelling/lists",                                  spelling.lists_create),
 ]
