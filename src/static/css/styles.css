@@ -172,3 +172,76 @@ form {
 .christmas__heading {
     font-size: 2rem;
 }
+
+
+{{/* Spelling Styles */}}
+
+.heading {
+    font-size: 2rem;
+}
+
+.button-bar {
+    margin-bottom: 1rem;
+}
+
+.button {
+    display: inline-block;
+    background-color: blue;
+    color: white;
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
+.spelling-grid {
+    display: grid;
+    grid-template-columns: 
+        repeat(
+            auto-fill,
+            minmax(300px, 1fr)
+        );
+    gap: 1rem;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    letter-spacing: 2px;
+}
+
+.spelling-grid__cell {
+    padding: 0.5rem;
+    border: 1px solid black;
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    text-align: center;
+}
+
+.missing-letter {
+    color: red;
+}
+
+.input-group {
+    display: grid;
+    margin-bottom: 1rem;
+}
+
+.multi-input-group {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.label {
+    font-weight: 600;
+}
+
+.input {
+    border: 1px solid black;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.form-btn {
+    background-color: blue;
+    color: white;
+    display: inline-block;
+    padding: 0.5rem;
+    min-width: 100px;
+    border-radius: 0.25rem;
+}
