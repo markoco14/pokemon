@@ -308,7 +308,85 @@ form {
         justify-content: center;
         align-items: center;
     }
+}
 
+.actions {
+    a {
+        width: content;
+        text-decoration: none;
+        color: inherit;
+        padding-inline: 1rem;
+        padding-block: 0.5rem;
+        border: 1px solid black;
+        border-radius: 0.25rem;
+    }
+
+    .end-game {
+        background-color: hsl(0, 1%, 85%);
+
+    }
+
+    .end-game:hover {
+        background-color: hsl(0, 1%, 69%);
+
+    }
+    .new-game {
+        background-color: hsl(228, 73%, 77%);
+    }
+
+
+    .new-game:hover {
+        background-color: hsl(228, 74%, 71%);
+    }
+}
+
+.featured-pokemon {
+    margin-block: 2rem;
+}
+
+.choices {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+
+    li {
+        border: 1px solid black;
+        border-radius: 0.5rem;
+    }
+    
+    a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        width: 100%;
+        padding-block: 1rem;
+        text-align: center;
+    }
+
+    .correct {
+        background-color: hsl(119 96% 89%);
+
+    }
+
+    .wrong {
+        background-color: hsl(0 96 89);
+    }
+}
+
+.choices-revealed {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+
+    li {
+        text-align: center;
+    }
+
+    img {
+        width: 125px;
+        height: 125px;
+        margin-bottom: 1rem;
+    }
 }
 
 @media screen and (min-width: 600px) {
