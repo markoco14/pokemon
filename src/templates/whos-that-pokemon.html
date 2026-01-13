@@ -3,34 +3,41 @@
 {% block title %}<title>Who's That Pokemon</title>{% endblock title %}
 
 {% block content %}
-    <div class="max-w-[600px] mx-auto px-2">
-        <h1 class="text-2xl mb-4 underline underline-offset-2">Who's That Pokemon</h1>
-        {# debug bar #}
-        {# <p>{{game.guesses}}</p> #}
-        {# end debug bar #}
-        <div class="w-[70px] mx-auto mb-4">
-            <img src="{{game.answer.img_path_large}}" alt="{{game.answer.name}}">
-        </div>
-        <div class="grid">
-            {% for pokemon in game.pokemons  %}
-                <a href="/whos-that-pokemon/{{game.id}}/{{pokemon.pokemon_id}}"
-                    class="border rounded mb-4 px-3 py-1 {% if pokemon.pokemon_id in game.guesses and pokemon.pokemon_id != game.answer.pokemon_id %}bg-orange-200{% elif pokemon.pokemon_id in game.guesses and pokemon.pokemon_id == game.answer.pokemon_id %}bg-green-200{% else %}{% endif %}">{{pokemon.name.capitalize()}}</a>
-            {% endfor %}
-        </div>
-        <a href="/" class="inline-block px-3 py-1 bg-gray-300 hover:bg-gray-400 rounded active:scale-95 underline underline-offset-2">Exit</a>
-        {% if game.finished %}
-            <a href="/whos-that-pokemon" class="inline-block px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 active:scale-95 underline underline-offset-2">New Game</a>
-            <div class="mt-4">
-                <h2 class="text-xl mb-4">Pokemon this round.</h2>
-                <div class="grid grid-cols-4 gap-2 justify-center">
-                    {% for pokemon in game.pokemons %}
-                        <div class="border rounded p-2 flex flex-col justify-center items-center">
-                            <img src="{{pokemon.img_path_large}}" alt="{{pokemon.name}}">
-                            <span>{{pokemon.name.capitalize()}}</span>
-                        </div>
-                    {% endfor %}
-                </div>
+    <div class="wrapper whos-that-pokemon">
+        <h1 class="page-heading">Who's That Pokemon</h1>
+        <section>
+            {# debug bar #}
+            {# <p>{{game.guesses}}</p> #}
+            {# end debug bar #}
+            <div class="featured-pokemon">
+                <img src="{{game.answer.img_path_large}}" alt="{{game.answer.name}}">
             </div>
+            <ul class="choices">
+                {% for pokemon in game.pokemons  %}
+                <li class="{% if pokemon.pokemon_id in game.guesses and pokemon.pokemon_id != game.answer.pokemon_id %}wrong{% elif pokemon.pokemon_id in game.guesses and pokemon.pokemon_id == game.answer.pokemon_id %}correct{% else %}{% endif %}">
+                    <a href="/whos-that-pokemon/{{game.id}}/{{pokemon.pokemon_id}}">{{pokemon.name.capitalize()}}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        <section class="actions">
+            <a href="/" class="end-game">Exit</a>
+            {% if game.finished %}
+            <a href="/whos-that-pokemon" class="new-game">New Game</a>
+            {% endif %}
+        </section>
+        {% if game.finished %}
+        <section>
+            <h2 class="section-heading">Pokemon this round</h2>
+            <ul class="choices-revealed">
+                {% for pokemon in game.pokemons %}
+                    <li class="border rounded p-2 flex flex-col justify-center items-center">
+                        <img src="{{pokemon.img_path_large}}" alt="{{pokemon.name}}">
+                        <span>{{pokemon.name.capitalize()}}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
         {% endif %}
     </div>
 {% endblock content %}
