@@ -14,7 +14,7 @@ def get_first_generation_from_api():
     pokemon_data_for_bulk_insert = []
     
     try:
-        with sqlite3.connect("pokemon.db") as connection:
+        with sqlite3.connect("esl.db") as connection:
             cursor = connection.cursor()
 
             # check if pokemon already in DB
@@ -29,19 +29,19 @@ def get_first_generation_from_api():
                 r = requests.get(f"https://pokeapi.co/api/v2/pokemon/{i}/")
                 r.raise_for_status()
 
-                name = r.json()["name"]
                 pokemon_id = r.json()["id"]
-                pokemon_order = r.json()["order"]
+                name = r.json()["name"]
+                number = r.json()["order"]
 
-                pokemon_data_for_bulk_insert.append((name, pokemon_id, pokemon_order))
-                print(f"got pokemon from api: {name} - {pokemon_id} - {pokemon_order}")
+                pokemon_data_for_bulk_insert.append((pokemon_id, name, number))
+                print(f"got pokemon from api: {pokemon_id} - {name} - {number}")
 
             if not pokemon_data_for_bulk_insert:
                 print("no pokemon.. bail out")
                 return
            
             cursor.executemany(
-                "INSERT OR IGNORE INTO pokemon (name, pokemon_id, pokemon_order) VALUES (?, ?, ?);",
+                "INSERT OR IGNORE INTO pokemon (pokemon_id, name, number) VALUES (?, ?, ?);",
                 pokemon_data_for_bulk_insert
             )
             connection.commit()

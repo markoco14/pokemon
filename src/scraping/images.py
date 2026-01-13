@@ -1,4 +1,6 @@
 import sqlite3
+import time
+from types import SimpleNamespace
 import requests
 import re
 
@@ -8,6 +10,85 @@ from src.queries import list_pokemon
 from src.types import Pokemon
 
 URL = "https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number"
+
+
+def new_scrape_thumbnails():
+    response = requests.get(URL)
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    gen1_heading = soup.find("span", id="Generation_I")
+    if not gen1_heading:
+        raise RuntimeError("Generation I heading not found")
+    
+    table = gen1_heading.find_parent("h3").find_next("table")
+    if not table:
+        raise RuntimeError("Table after Generation I not found")
+    
+    update_data = []
+    rows = table.find_all("tr")
+    for row in rows:
+
+        # get td not th
+        cells = row.find_all("td")
+        if len(cells) < 2:
+            continue
+
+        id = cells[0].get_text(strip=True)
+        if not id.startswith("#"):
+            continue
+
+        img = cells[1].find("img")
+        if not img:
+            continue
+
+        img_src = img.get("src")
+
+        stripped_id = id.lstrip("#").lstrip("0")
+        update_data.append((img_src, stripped_id))
+
+    with sqlite3.connect("esl.db") as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.executemany("UPDATE pokemon SET img_path_thumbnail = ? WHERE pokemon_id = ?;", update_data)
+
+
+def scrape_large_images(url="https://bulbapedia.bulbagarden.net/wiki/Bulbasaur_(Pokémon)"):
+    base_url = "https://bulbapedia.bulbagarden.net/wiki/"
+    
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    # get image
+    table = soup.find("table", class_="roundy infobox")
+
+    rows = table.find_all("tr")
+    th = rows[0].find("th")
+    id = th.find("span").get_text()
+    stripped_id = int(id.lstrip("#").lstrip("0"))
+    large_img = rows[0].find("img")
+    img_src = large_img.get("src")
+
+    if stripped_id > 151:
+        return
+    
+    with sqlite3.connect("esl.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE pokemon SET img_path_large = ? WHERE pokemon_id = ?;", (img_src, stripped_id))
+
+    next_link_target = f"#{stripped_id + 1:04d}"
+    first_table = soup.find_all("table")[0]
+    span = first_table.find("span", string=re.compile(next_link_target))
+
+    a = span.find_parent("a")
+    href = a.get("href")
+
+    new_url = base_url + href.split("/wiki/")[1]
+
+    time.sleep(0.5)
+
+    scrape_large_images(new_url)
+
+
 
 
 def scrape_pokemon_thumbnails():
@@ -71,17 +152,17 @@ def store_thumbnails_links():
                     name=row[1],
                     pokemon_id=row[2],
                     pokemon_order=row[3],
-                    thumbnail=thumbnails_to_keep[row[0]-1]
+                    img_path_thumbnail=thumbnails_to_keep[row[0]-1]
                 )
 
     # update rows in the database
     update_params = [(value.thumbnail, value.pokemon_id) for value in pokemon_dict.values()]
     try:
-        with sqlite3.connect("pokemon.db") as connection:
+        with sqlite3.connect("esl.db") as connection:
             cursor = connection.cursor()
 
             cursor.executemany(
-                '''UPDATE pokemon SET thumbnail = ? WHERE id = ?''',
+                '''UPDATE pokemon SET img_path_thumbnail = ? WHERE id = ?''',
                 update_params
             )
 
