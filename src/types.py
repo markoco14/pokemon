@@ -4,10 +4,11 @@ from typing import List, Optional
 
 @dataclass
 class Pokemon:
-    name: str
     pokemon_id: int
-    pokemon_order: int
-    thumbnail: Optional[str] = ''
+    name: str
+    number: int
+    img_path_thumbnail: Optional[str] = ""
+    img_path_large: Optional[str] = ""
 
 @dataclass
 class Game:
