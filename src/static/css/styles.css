@@ -2,6 +2,12 @@
     navigation: auto;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     min-height: 100vh;
     overflow-y: scroll;
@@ -15,16 +21,31 @@ h2 {
     font-size: 1.5rem;
 }
 
-{{/* Utility styles */}}
+ul, ol {
+    list-style-type: none;
+}
+
+/* Utility styles */
 
 .wrapper {
     width: 100%;
     max-width: 800px;
     margin-inline: auto;
-    padding-inline: 8px;
 }
 
-{{/* Header styles */}}
+
+@media screen and (max-width: 600px) {
+    .wrapper {
+        padding-inline: 0.5rem;
+    }
+}
+
+.page-heading {
+    font-size: 3rem;
+    text-decoration: underline;
+    text-underline-offset: 0.25rem;
+}
+/* Header styles */
 
 header {
     position: sticky;
@@ -167,14 +188,14 @@ form {
     background-color: midnightblue;
 }
 
-{{/* Christmas Styles */}}
+/* Christmas Styles */
 
 .christmas__heading {
     font-size: 2rem;
 }
 
 
-{{/* Spelling Styles */}}
+/* Spelling Styles */
 
 .heading {
     font-size: 2rem;
