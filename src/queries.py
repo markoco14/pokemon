@@ -23,7 +23,7 @@ def get_whos_that_pokemon(random_numbers: List[int]) -> List[any]:
             cursor = conn.cursor()
 
             placeholders = ', '.join('?' * len(random_numbers))
-            query = f"SELECT * FROM pokemon WHERE id IN ({placeholders});"
+            query = f"SELECT * FROM pokemon WHERE pokemon_id IN ({placeholders});"
             cursor.execute(query, random_numbers)
             rows = cursor.fetchall()
     except Exception as e:

@@ -9,7 +9,7 @@
         {# <p>{{game.guesses}}</p> #}
         {# end debug bar #}
         <div class="w-[70px] mx-auto mb-4">
-            <img src="{{game.answer.thumbnail}}" alt="{{game.answer.name}}">
+            <img src="{{game.answer.img_path_large}}" alt="{{game.answer.name}}">
         </div>
         <div class="grid">
             {% for pokemon in game.pokemons  %}
@@ -25,7 +25,7 @@
                 <div class="grid grid-cols-4 gap-2 justify-center">
                     {% for pokemon in game.pokemons %}
                         <div class="border rounded p-2 flex flex-col justify-center items-center">
-                            <img src="{{pokemon.thumbnail}}" alt="{{pokemon.name}}">
+                            <img src="{{pokemon.img_path_large}}" alt="{{pokemon.name}}">
                             <span>{{pokemon.name.capitalize()}}</span>
                         </div>
                     {% endfor %}

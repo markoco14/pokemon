@@ -41,14 +41,15 @@ async def whos_that(request: Request):
     game_id = random.randint(1000, 10001)
     random_numbers = get_four_unique_numbers()
     rows = queries.get_whos_that_pokemon(random_numbers=random_numbers)
-
     pokemons = []
+
     for row in rows:
         pokemon = Pokemon(
-                name=row[1],
-                pokemon_id=row[2],
-                pokemon_order=row[3],
-                thumbnail=row[4]
+                pokemon_id=row["pokemon_id"],
+                name=row["name"],
+                number=row["number"],
+                img_path_thumbnail=row["img_path_thumbnail"],
+                img_path_large=row["img_path_large"]
             )
         pokemons.append(pokemon)
 
