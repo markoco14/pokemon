@@ -1,11 +1,14 @@
 import random
+import sqlite3
+from typing import Annotated
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from src import queries
+from src.dependencies import get_db
 from src.types import Game, Pokemon
 from src.utils import get_four_unique_numbers
 
@@ -18,22 +21,22 @@ from src.templates import templates
 games = {}
 
 
-async def index(request: Request):
-    rows = queries.list_pokemon()
-
-    pokemons = []
-    for row in rows:
-        pokemon = Pokemon(
-            pokemon_id=row["pokemon_id"],
-            name=row["name"],
-            number=row["number"],
-            img_path_thumbnail=row["img_path_thumbnail"],
-            img_path_large=row["img_path_large"]
-        )
-        pokemons.append(pokemon)
+async def index(
+        request: Request,
+        conn: Annotated[sqlite3.Connection, Depends(get_db)]
+        ):
     
+    pokemon = conn.execute(
+        """
+        SELECT w.word_id, w.word, w.thumbnail_img_path FROM word AS w 
+        JOIN word_category AS wc ON wc.word_id = w.word_id
+        JOIN category AS c ON c.category_id = wc.category_id
+        WHERE c.name = 'pokemon';
+        """
+        ).fetchall()
+        
     return templates.TemplateResponse(
-        request=request, name="pokemon/index.html", context={"pokemons": pokemons}
+        request=request, name="pokemon/index.html", context={"pokemons": pokemon}
     )
 
 

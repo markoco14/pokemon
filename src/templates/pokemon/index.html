@@ -20,9 +20,9 @@
                     {% for pokemon in pokemons %}
                         <li>
                             <span>
-                                <img src="{{pokemon.img_path_thumbnail}}"  loading="lazy"/>
+                                <img src="{{pokemon.thumbnail_img_path}}"  loading="lazy"/>
                             </span>
-                            <span>{{pokemon.name.capitalize()}}</span>
+                            <span>{{pokemon.word.capitalize()}}</span>
                         </li>
                     {% endfor %}
                 </ul>
