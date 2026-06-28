@@ -10,12 +10,12 @@
             {# <p>{{game.guesses}}</p> #}
             {# end debug bar #}
             <div class="featured-pokemon">
-                <img src="{{game.answer.img_path_large}}" alt="{{game.answer.name}}">
+                <img src="{{game.answer.large_img_path}}" alt="{{game.answer.word}}">
             </div>
             <ul class="choices">
                 {% for pokemon in game.pokemons  %}
-                <li class="{% if pokemon.pokemon_id in game.guesses and pokemon.pokemon_id != game.answer.pokemon_id %}wrong{% elif pokemon.pokemon_id in game.guesses and pokemon.pokemon_id == game.answer.pokemon_id %}correct{% else %}{% endif %}">
-                    <a href="/whos-that-pokemon/{{game.id}}/{{pokemon.pokemon_id}}">{{pokemon.name.capitalize()}}</a>
+                <li class="{% if pokemon.word_id in game.guesses and pokemon.word_id != game.answer.word_id %}wrong{% elif pokemon.word_id in game.guesses and pokemon.word_id == game.answer.word_id %}correct{% else %}{% endif %}">
+                    <a href="/whos-that-pokemon/{{game.id}}/{{pokemon.word_id}}">{{pokemon.word.capitalize()}}</a>
                 </li>
                 {% endfor %}
             </ul>
@@ -32,8 +32,8 @@
             <ul class="choices-revealed">
                 {% for pokemon in game.pokemons %}
                     <li class="border rounded p-2 flex flex-col justify-center items-center">
-                        <img src="{{pokemon.img_path_large}}" alt="{{pokemon.name}}">
-                        <span>{{pokemon.name.capitalize()}}</span>
+                        <img src="{{pokemon.large_img_path}}" alt="{{pokemon.word}}">
+                        <span>{{pokemon.word.capitalize()}}</span>
                     </li>
                 {% endfor %}
             </ul>
