@@ -25,10 +25,10 @@ async def index(
 
     new_monsters = conn.execute(
         """
-            SELECT w.word_id, w.word, w.large_img_path FROM word AS w 
-            JOIN word_category AS wc ON wc.word_id = w.word_id
-            JOIN category AS c ON c.category_id = wc.category_id
-            WHERE c.name = 'monster';
+        SELECT w.word_id, w.word, w.large_img_path FROM word AS w 
+        JOIN word_category AS wc ON wc.word_id = w.word_id
+        JOIN category AS c ON c.category_id = wc.category_id
+        WHERE c.name = 'monster';
         """
     ).fetchall()
     
@@ -52,8 +52,8 @@ async def monster_show(
     
     new_monster = conn.execute(
         """
-            SELECT word_id, word, large_img_path FROM word
-            WHERE word_id = :word_id;
+        SELECT word_id, word, large_img_path FROM word
+        WHERE word_id = :word_id;
         """,
         {"word_id": monster_id}
     ).fetchone()
@@ -75,8 +75,8 @@ async def monster_edit(
 
     new_monster = conn.execute(
         """
-            SELECT word_id, word, large_img_path FROM word
-            WHERE word_id = :word_id;
+        SELECT word_id, word, large_img_path FROM word
+        WHERE word_id = :word_id;
         """,
         {"word_id": monster_id}
     ).fetchone()
@@ -94,13 +94,23 @@ async def monster_update(
     request: Request,
     monster_id: str,
     name: Annotated[str, Form()],
-    large_img: Annotated[str, Form()]
+    large_img: Annotated[str, Form()],
+    conn: Annotated[sqlite3.Connection, Depends(get_db)]
     ):
     """Updates a monster resource."""
-    monster = Monster.get(monster_id=monster_id)
+    # monster = Monster.get(monster_id=monster_id)
     new_monster_name = name
+    print(new_monster_name)
 
-    if not monster:
+    new_monster = conn.execute(
+        """
+        SELECT word_id, word, large_img_path FROM word
+        WHERE word_id = :word_id;
+        """,
+        {"word_id": monster_id}
+    ).fetchone()
+
+    if not new_monster:
         return Response(status_code=200, headers={"hx-redirect": "/halloween"})
 
     if new_monster_name == "":
@@ -108,28 +118,44 @@ async def monster_update(
         return templates.TemplateResponse(
             request=request,
             name="halloween/monsters/edit.html",
-            context=MonsterEditPage(
-                monster=monster,
-                name_error=name_error
-            )
+            context={
+                "monster": new_monster,
+                "name_error": name_error
+            }
         )
-    
-    monster.update(name=new_monster_name, large_img_path=large_img)
 
-    return Response(status_code=200, headers={"hx-redirect": f"/halloween/monsters/{monster.monster_id}/edit"})
-    
-class MonsterTeachPage(TypedDict):
-    monsters: list[Monster]
+    conn.execute(
+        """
+        UPDATE word 
+        SET word = :word, large_img_path = :large_img_path
+        WHERE word_id = :word_id;
+        """,
+        {
+            "word": new_monster_name,
+            "large_img_path": large_img,
+            "word_id": monster_id
+        }
+    )
+    conn.commit()
 
-async def monster_teach(request: Request):
-    monsters = Monster.list()
+    return Response(status_code=200, headers={"hx-redirect": f"/halloween/monsters/{new_monster['word_id']}/edit"})
     
+
+async def monster_teach(request: Request,conn: Annotated[sqlite3.Connection, Depends(get_db)]):
+    new_monsters = conn.execute(
+        """
+        SELECT w.word_id, w.word, w.large_img_path FROM word AS w 
+        JOIN word_category AS wc ON wc.word_id = w.word_id
+        JOIN category AS c ON c.category_id = wc.category_id
+        WHERE c.name = 'monster';
+        """
+    ).fetchall()
     return templates.TemplateResponse(
             request=request,
             name="halloween/monsters/teach.html",
-            context=MonsterTeachPage(
-                monsters=monsters
-            )
+            context={
+                "monsters": new_monsters
+            }
         )
 
 async def monster_see_and_say(request: Request):
