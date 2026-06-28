@@ -1,10 +1,12 @@
+import sqlite3
 from typing import Annotated, TypedDict
-from fastapi import FastAPI, Form, Request, Response
+from fastapi import Depends, FastAPI, Form, Request, Response
 
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from src.dependencies import get_db
 from src.models.monster import Monster
 
 app = FastAPI()
@@ -16,14 +18,25 @@ from src.templates import templates
 class IndexPage(TypedDict):
     monsters: list[Monster]
 
-async def index(request: Request):
+async def index(
+        request: Request,
+        conn: Annotated[sqlite3.Connection, Depends(get_db)]
+        ):
 
-    monsters = Monster.list()
+    new_monsters = conn.execute(
+        """
+            SELECT w.word_id, w.word, w.large_img_path FROM word AS w 
+            JOIN word_category AS wc ON wc.word_id = w.word_id
+            JOIN category AS c ON c.category_id = wc.category_id
+            WHERE c.name = 'monster';
+        """
+    ).fetchall()
+    
     return templates.TemplateResponse(
         request=request,
         name="halloween/index.html",
         context=IndexPage(
-            monsters=monsters
+            monsters=new_monsters
         )
     )
 
