@@ -1,11 +1,14 @@
 import random
+import sqlite3
+from typing import Annotated
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from src import queries
+from src.dependencies import get_db
 from src.types import Game, Pokemon
 from src.utils import get_four_unique_numbers
 
@@ -18,47 +21,52 @@ from src.templates import templates
 games = {}
 
 
-async def index(request: Request):
-    rows = queries.list_pokemon()
-
-    pokemons = []
-    for row in rows:
-        pokemon = Pokemon(
-            pokemon_id=row["pokemon_id"],
-            name=row["name"],
-            number=row["number"],
-            img_path_thumbnail=row["img_path_thumbnail"],
-            img_path_large=row["img_path_large"]
-        )
-        pokemons.append(pokemon)
+async def index(
+        request: Request,
+        conn: Annotated[sqlite3.Connection, Depends(get_db)]
+        ):
     
+    pokemon = conn.execute(
+        """
+        SELECT w.word_id, w.word, w.thumbnail_img_path FROM word AS w 
+        JOIN word_category AS wc ON wc.word_id = w.word_id
+        JOIN category AS c ON c.category_id = wc.category_id
+        WHERE c.name = 'pokemon';
+        """
+        ).fetchall()
+        
     return templates.TemplateResponse(
-        request=request, name="pokemon/index.html", context={"pokemons": pokemons}
+        request=request, name="pokemon/index.html", context={"pokemons": pokemon}
     )
 
 
-async def whos_that(request: Request):
+async def whos_that(
+        request: Request,
+        conn: Annotated[sqlite3.Connection, Depends(get_db)]
+        ):
     game_id = random.randint(1000, 10001)
-    random_numbers = get_four_unique_numbers()
-    rows = queries.get_whos_that_pokemon(random_numbers=random_numbers)
-    pokemons = []
 
-    for row in rows:
-        pokemon = Pokemon(
-                pokemon_id=row["pokemon_id"],
-                name=row["name"],
-                number=row["number"],
-                img_path_thumbnail=row["img_path_thumbnail"],
-                img_path_large=row["img_path_large"]
-            )
-        pokemons.append(pokemon)
-
-    answer = pokemons[random.randint(0,3)]
+    # TODO: change this back to only select 4 pokemon
+    # requires some work because pokemon ids are lost
+    # need some kind of word_meta table or pokemon_meta table 
+    # to connect pokemon numbers to words
+    pokemon = conn.execute(
+        """
+        SELECT w.word_id, w.word, w.large_img_path FROM word AS w 
+        JOIN word_category AS wc ON wc.word_id = w.word_id
+        JOIN category AS c ON c.category_id = wc.category_id
+        WHERE c.name = 'pokemon';
+        """
+        ).fetchall()
+    
+    chosen_pokemon = random.sample(population=pokemon, k=4)
+    
+    answer = chosen_pokemon[random.randint(0,3)]
 
     games[game_id] = Game(
         id=game_id,
         answer=answer,
-        pokemons=pokemons,
+        pokemons=chosen_pokemon,
         guesses=[],
         finished=False
     )
@@ -82,7 +90,7 @@ def guess_that_pokemon(request: Request, game_id: int, guess_pokemon_id: int):
     if guess_pokemon_id not in games[game_id].guesses:
         games[game_id].guesses.append(guess_pokemon_id)
 
-    if guess_pokemon_id == games[game_id].answer.pokemon_id:
+    if guess_pokemon_id == games[game_id].answer["word_id"]:
         games[game_id].finished = True
     
     return RedirectResponse(url=f"/whos-that-pokemon/{game_id}")

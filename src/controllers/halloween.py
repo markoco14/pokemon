@@ -1,10 +1,13 @@
+import random
+import sqlite3
 from typing import Annotated, TypedDict
-from fastapi import FastAPI, Form, Request, Response
+from fastapi import Depends, FastAPI, Form, Request, Response
 
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from src.dependencies import get_db
 from src.models.monster import Monster
 
 app = FastAPI()
@@ -16,14 +19,25 @@ from src.templates import templates
 class IndexPage(TypedDict):
     monsters: list[Monster]
 
-async def index(request: Request):
+async def index(
+        request: Request,
+        conn: Annotated[sqlite3.Connection, Depends(get_db)]
+        ):
 
-    monsters = Monster.list()
+    new_monsters = conn.execute(
+        """
+        SELECT w.word_id, w.word, w.large_img_path FROM word AS w 
+        JOIN word_category AS wc ON wc.word_id = w.word_id
+        JOIN category AS c ON c.category_id = wc.category_id
+        WHERE c.name = 'monster';
+        """
+    ).fetchall()
+    
     return templates.TemplateResponse(
         request=request,
         name="halloween/index.html",
         context=IndexPage(
-            monsters=monsters
+            monsters=new_monsters
         )
     )
 
@@ -31,44 +45,73 @@ async def index(request: Request):
 class MonsterShowPage(TypedDict):
     monster: Monster
 
-async def monster_show(request: Request, monster_id: str):
-    monster = Monster.get(monster_id=monster_id)
+async def monster_show(
+        request: Request,
+        monster_id: str,
+        conn: Annotated[sqlite3.Connection, Depends(get_db)]
+        ):
+    
+    new_monster = conn.execute(
+        """
+        SELECT word_id, word, large_img_path FROM word
+        WHERE word_id = :word_id;
+        """,
+        {"word_id": monster_id}
+    ).fetchone()
 
     return templates.TemplateResponse(
         request=request,
         name="halloween/monsters/show.html",
         context=MonsterShowPage(
-            monster=monster
+            monster=new_monster
         )
     )
 
-class MonsterEditPage(TypedDict):
-    monster: Monster
-    name_error: str
 
-async def monster_edit(request: Request, monster_id: str):
-    monster = Monster.get(monster_id=monster_id)
+async def monster_edit(
+        request: Request, 
+        monster_id: str,
+        conn: Annotated[sqlite3.Connection, Depends(get_db)]
+        ):
+
+    new_monster = conn.execute(
+        """
+        SELECT word_id, word, large_img_path FROM word
+        WHERE word_id = :word_id;
+        """,
+        {"word_id": monster_id}
+    ).fetchone()
 
     return templates.TemplateResponse(
         request=request,
         name="halloween/monsters/edit.html",
-        context=MonsterEditPage(
-            monster=monster,
-            name_error=""
-        )
+        context={
+            "monster": new_monster,
+            "name_error": ""
+        }
     )
 
 async def monster_update(
     request: Request,
     monster_id: str,
     name: Annotated[str, Form()],
-    large_img: Annotated[str, Form()]
+    large_img: Annotated[str, Form()],
+    conn: Annotated[sqlite3.Connection, Depends(get_db)]
     ):
     """Updates a monster resource."""
-    monster = Monster.get(monster_id=monster_id)
+    # monster = Monster.get(monster_id=monster_id)
     new_monster_name = name
+    print(new_monster_name)
 
-    if not monster:
+    new_monster = conn.execute(
+        """
+        SELECT word_id, word, large_img_path FROM word
+        WHERE word_id = :word_id;
+        """,
+        {"word_id": monster_id}
+    ).fetchone()
+
+    if not new_monster:
         return Response(status_code=200, headers={"hx-redirect": "/halloween"})
 
     if new_monster_name == "":
@@ -76,46 +119,82 @@ async def monster_update(
         return templates.TemplateResponse(
             request=request,
             name="halloween/monsters/edit.html",
-            context=MonsterEditPage(
-                monster=monster,
-                name_error=name_error
-            )
+            context={
+                "monster": new_monster,
+                "name_error": name_error
+            }
         )
-    
-    monster.update(name=new_monster_name, large_img_path=large_img)
 
-    return Response(status_code=200, headers={"hx-redirect": f"/halloween/monsters/{monster.monster_id}/edit"})
-    
-class MonsterTeachPage(TypedDict):
-    monsters: list[Monster]
+    conn.execute(
+        """
+        UPDATE word 
+        SET word = :word, large_img_path = :large_img_path
+        WHERE word_id = :word_id;
+        """,
+        {
+            "word": new_monster_name,
+            "large_img_path": large_img,
+            "word_id": monster_id
+        }
+    )
+    conn.commit()
 
-async def monster_teach(request: Request):
-    monsters = Monster.list()
+    return Response(status_code=200, headers={"hx-redirect": f"/halloween/monsters/{new_monster['word_id']}/edit"})
     
+
+async def monster_teach(request: Request, conn: Annotated[sqlite3.Connection, Depends(get_db)]):
+    new_monsters = conn.execute(
+        """
+        SELECT w.word_id, w.word, w.large_img_path FROM word AS w 
+        JOIN word_category AS wc ON wc.word_id = w.word_id
+        JOIN category AS c ON c.category_id = wc.category_id
+        WHERE c.name = 'monster';
+        """
+    ).fetchall()
     return templates.TemplateResponse(
             request=request,
             name="halloween/monsters/teach.html",
-            context=MonsterTeachPage(
-                monsters=monsters
-            )
+            context={
+                "monsters": new_monsters
+            }
         )
 
-async def monster_see_and_say(request: Request):
-    if not request.query_params.get("monster"):
-        monster = Monster.get_random()
-        return RedirectResponse(status_code=303, url=f"/halloween/monsters/see-and-say?monster={monster.name}")
+async def monster_see_and_say(request: Request, conn: Annotated[sqlite3.Connection, Depends(get_db)]):
+    new_monsters = conn.execute(
+            """
+            SELECT w.word_id, w.word, w.large_img_path FROM word AS w 
+            JOIN word_category AS wc ON wc.word_id = w.word_id
+            JOIN category AS c ON c.category_id = wc.category_id
+            WHERE c.name = 'monster';
+            """
+        ).fetchall()
+    number_of_monsters = len(new_monsters)
     
-    monster = Monster.get_by_name(name=request.query_params.get("monster"))
+    if not request.query_params.get("monster"):
+        random_index = random.randint(1, number_of_monsters)
+        monster = conn.execute("SELECT * FROM word WHERE word_id = :word_id;", {"word_id": random_index}).fetchone()
+        return RedirectResponse(status_code=303, url=f"/halloween/monsters/see-and-say?monster={monster['word']}")
 
-    next_monster = Monster.get_random()
-    while next_monster.name == monster.name:
-        next_monster = Monster.get_random()
+    new_monster = conn.execute(
+        """
+        SELECT word_id, word, large_img_path FROM word
+        WHERE word = :word;
+        """,
+        {"word": request.query_params.get("monster")}
+    ).fetchone()
+    
+    random_index = random.randint(1, number_of_monsters)
+    next_monster = conn.execute("SELECT * FROM word WHERE word_id = :word_id;", {"word_id": random_index}).fetchone()
+    
+    while next_monster["word"] == new_monster["word"]:
+        random_index = random.randint(1, number_of_monsters)
+        next_monster = conn.execute("SELECT * FROM word WHERE word_id = :word_id;", {"word_id": random_index}).fetchone()
     
     return templates.TemplateResponse(
         request=request,
         name=f"halloween/monsters/see-and-say.html",
         context={
-            "monster": monster,
+            "monster": new_monster,
             "next_monster": next_monster
         }
     )
