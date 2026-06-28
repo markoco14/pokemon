@@ -1,3 +1,4 @@
+import random
 import sqlite3
 from typing import Annotated, TypedDict
 from fastapi import Depends, FastAPI, Form, Request, Response
@@ -141,7 +142,7 @@ async def monster_update(
     return Response(status_code=200, headers={"hx-redirect": f"/halloween/monsters/{new_monster['word_id']}/edit"})
     
 
-async def monster_teach(request: Request,conn: Annotated[sqlite3.Connection, Depends(get_db)]):
+async def monster_teach(request: Request, conn: Annotated[sqlite3.Connection, Depends(get_db)]):
     new_monsters = conn.execute(
         """
         SELECT w.word_id, w.word, w.large_img_path FROM word AS w 
@@ -158,22 +159,42 @@ async def monster_teach(request: Request,conn: Annotated[sqlite3.Connection, Dep
             }
         )
 
-async def monster_see_and_say(request: Request):
-    if not request.query_params.get("monster"):
-        monster = Monster.get_random()
-        return RedirectResponse(status_code=303, url=f"/halloween/monsters/see-and-say?monster={monster.name}")
+async def monster_see_and_say(request: Request, conn: Annotated[sqlite3.Connection, Depends(get_db)]):
+    new_monsters = conn.execute(
+            """
+            SELECT w.word_id, w.word, w.large_img_path FROM word AS w 
+            JOIN word_category AS wc ON wc.word_id = w.word_id
+            JOIN category AS c ON c.category_id = wc.category_id
+            WHERE c.name = 'monster';
+            """
+        ).fetchall()
+    number_of_monsters = len(new_monsters)
     
-    monster = Monster.get_by_name(name=request.query_params.get("monster"))
+    if not request.query_params.get("monster"):
+        random_index = random.randint(1, number_of_monsters)
+        monster = conn.execute("SELECT * FROM word WHERE word_id = :word_id;", {"word_id": random_index}).fetchone()
+        return RedirectResponse(status_code=303, url=f"/halloween/monsters/see-and-say?monster={monster['word']}")
 
-    next_monster = Monster.get_random()
-    while next_monster.name == monster.name:
-        next_monster = Monster.get_random()
+    new_monster = conn.execute(
+        """
+        SELECT word_id, word, large_img_path FROM word
+        WHERE word = :word;
+        """,
+        {"word": request.query_params.get("monster")}
+    ).fetchone()
+    
+    random_index = random.randint(1, number_of_monsters)
+    next_monster = conn.execute("SELECT * FROM word WHERE word_id = :word_id;", {"word_id": random_index}).fetchone()
+    
+    while next_monster["word"] == new_monster["word"]:
+        random_index = random.randint(1, number_of_monsters)
+        next_monster = conn.execute("SELECT * FROM word WHERE word_id = :word_id;", {"word_id": random_index}).fetchone()
     
     return templates.TemplateResponse(
         request=request,
         name=f"halloween/monsters/see-and-say.html",
         context={
-            "monster": monster,
+            "monster": new_monster,
             "next_monster": next_monster
         }
     )
