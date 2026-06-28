@@ -66,20 +66,28 @@ async def monster_show(
         )
     )
 
-class MonsterEditPage(TypedDict):
-    monster: Monster
-    name_error: str
 
-async def monster_edit(request: Request, monster_id: str):
-    monster = Monster.get(monster_id=monster_id)
+async def monster_edit(
+        request: Request, 
+        monster_id: str,
+        conn: Annotated[sqlite3.Connection, Depends(get_db)]
+        ):
+
+    new_monster = conn.execute(
+        """
+            SELECT word_id, word, large_img_path FROM word
+            WHERE word_id = :word_id;
+        """,
+        {"word_id": monster_id}
+    ).fetchone()
 
     return templates.TemplateResponse(
         request=request,
         name="halloween/monsters/edit.html",
-        context=MonsterEditPage(
-            monster=monster,
-            name_error=""
-        )
+        context={
+            "monster": new_monster,
+            "name_error": ""
+        }
     )
 
 async def monster_update(
