@@ -12,12 +12,12 @@
                 <div class="form-item">
                     <label for="name">Name</label>
                     <input id="name" name="name" type="text" value="{{monster.word}}" autocomplete="none"/>
-                    <p class="error">{{name_error}}</p>
+                    <p id="name_error" class="error">{{name_error}}</p>
                 </div>
                 <div class="form-item">
                     <label for="large_img">Large Image</label>
                     <input id="large_img" name="large_img" type="text" value="{% if monster.large_img_path %}{{monster.large_img_path}}{% endif %}" autocomplete="none"/>
-                    <p class="error"></p>
+                    <p id="image_error" class="error">{{image_error}}</p>
                 </div>
                 <button type="submit">Save</button>
             </form>

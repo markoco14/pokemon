@@ -1,9 +1,12 @@
 import random
 import sqlite3
-from fastapi import Request
+from typing import Annotated
+from fastapi import Depends, Request
 
 from fastapi.responses import RedirectResponse
 
+from repositories import word_repository
+from src.dependencies import get_db
 from src.templates import templates
 
 async def index(request: Request):
@@ -14,56 +17,27 @@ async def index(request: Request):
     )
 
 
-async def teach(request: Request):
-    with sqlite3.connect("esl.db") as conn:
-        conn.execute("PRAGMA journal_mode = WAL;")
-        conn.execute("PRAGMA foreign_keys = ON;")
-        conn.row_factory = sqlite3.Row
-
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM christmas;")
-        vocab_set = cursor.fetchall()
-
+async def teach(request: Request, conn: Annotated[sqlite3.Connection, Depends(get_db)]):
+    words = word_repository.list_by_category(conn=conn, category="christmas")
     
     return templates.TemplateResponse(
         request=request,
         name="christmas/teach.html",
-        context={"vocab_set": vocab_set}
+        context={"vocab_set": words}
     )
 
 
-def get_random_word():
-    with sqlite3.connect("esl.db") as conn:
-        conn.execute("PRAGMA journal_mode = WAL;")
-        conn.execute("PRAGMA foreign_keys = ON;")
-        conn.row_factory = sqlite3.Row
-
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM christmas;")
-        vocab_set = cursor.fetchall()
-
-    random_index = random.randrange(len(vocab_set))
-
-    return vocab_set[random_index]
-
-
-async def see_and_say(request: Request):
-    if not request.query_params.get("word"):
-        word = get_random_word()
-        return RedirectResponse(status_code=303, url=f"/christmas/see-and-say?word={word['name']}")
+async def see_and_say(request: Request, conn: Annotated[sqlite3.Connection, Depends(get_db)]):
+    query_word = request.query_params.get("word")
+    if not query_word:
+        word = word_repository.get_random_word_by_category(conn=conn, category="christmas")
+        return RedirectResponse(status_code=303, url=f"/christmas/see-and-say?word={word['word']}")
     
-    with sqlite3.connect("esl.db") as conn:
-        conn.execute("PRAGMA journal_mode = WAL;")
-        conn.execute("PRAGMA foreign_keys = ON;")
-        conn.row_factory = sqlite3.Row
+    word = word_repository.get_by_word(conn=conn, word=query_word)
 
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM christmas WHERE name = ?;", (request.query_params.get("word"),))
-        word = cursor.fetchone()
-
-    next_word = get_random_word()
-    while next_word["name"] == word["name"]:
-        next_word = get_random_word()
+    next_word = word_repository.get_random_word_by_category(conn=conn, category="christmas")
+    while next_word["word"] == word["word"]:
+        next_word = word_repository.get_random_word_by_category(conn=conn, category="christmas")
     
     return templates.TemplateResponse(
         request=request,
