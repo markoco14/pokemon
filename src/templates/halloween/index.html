@@ -3,12 +3,12 @@
 {% block title %}<title>Halloween</title>{% endblock title %}
 
 {% block content %}
-    <div class="max-w-[800px] mx-auto px-2">
-        <section class="mb-4">
+    <div class="wrapper">
+        <section class="section">
             <h1 class="text-2xl underline underline-offset-2">ESL Halloween</h1>
             <p>Learn evrything you need to know about Halloween vocabulary.</p>
         </section>
-        <section class="mb-4">
+        <section class="section">
             <h2>Games</h2>
             <nav>
                 <ul class="game__list">
@@ -17,7 +17,7 @@
                 </ul>
             </nav>
         </section>
-        <section class="mb-4">
+        <section class="section">
             <h2>Meet the Halloween Monsters</h2>
             {% if monsters %}
             <ul class="monster-list">
