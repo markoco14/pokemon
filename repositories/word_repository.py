@@ -1,3 +1,4 @@
+import random
 import sqlite3
 from typing import List
 
@@ -45,6 +46,13 @@ def get_by_word(conn: sqlite3.Connection, word: str) -> sqlite3.Row:
         """,
         {"word": word}
     ).fetchone()
+
+
+def get_random_word_by_category(conn: sqlite3.Connection, category: str):
+    words = list_by_category(conn=conn, category=category)
+    choice = random.choice(words)
+
+    return choice
     
 
 def update(conn: sqlite3.Connection, new_word: str, new_large_img_path: str, word_id: int):
