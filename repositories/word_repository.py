@@ -13,6 +13,19 @@ def list_by_category(conn: sqlite3.Connection, category: str):
     ).fetchall()
 
 
+def get_count_by_category(conn: sqlite3.Connection, category: str):
+    return conn.execute(
+        """
+        SELECT COUNT(*) 
+        FROM word AS w 
+        JOIN word_category AS wc ON wc.word_id = w.word_id
+        JOIN category AS c ON c.category_id = wc.category_id
+        WHERE c.name = :category;
+        """,
+        {"category": category}
+    ).fetchone()[0]
+
+
 def get(conn: sqlite3.Connection, word_id: int):
     return conn.execute(
         """
