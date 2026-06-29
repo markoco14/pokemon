@@ -16,8 +16,6 @@ app.mount("/src/static", StaticFiles(directory="src/static"), name="static")
 
 from src.templates import templates
 
-class IndexPage(TypedDict):
-    monsters: list[Monster]
 
 async def index(
         request: Request,
@@ -36,14 +34,11 @@ async def index(
     return templates.TemplateResponse(
         request=request,
         name="halloween/index.html",
-        context=IndexPage(
-            monsters=new_monsters
-        )
+        context={
+            "monsters": new_monsters
+        }
     )
 
-
-class MonsterShowPage(TypedDict):
-    monster: Monster
 
 async def monster_show(
         request: Request,
@@ -62,9 +57,9 @@ async def monster_show(
     return templates.TemplateResponse(
         request=request,
         name="halloween/monsters/show.html",
-        context=MonsterShowPage(
-            monster=new_monster
-        )
+        context={
+            "monster": new_monster
+        }
     )
 
 
@@ -99,9 +94,7 @@ async def monster_update(
     conn: Annotated[sqlite3.Connection, Depends(get_db)]
     ):
     """Updates a monster resource."""
-    # monster = Monster.get(monster_id=monster_id)
     new_monster_name = name
-    print(new_monster_name)
 
     new_monster = conn.execute(
         """
@@ -139,7 +132,10 @@ async def monster_update(
     )
     conn.commit()
 
-    return Response(status_code=200, headers={"hx-redirect": f"/halloween/monsters/{new_monster['word_id']}/edit"})
+    return Response(
+        status_code=200, 
+        headers={"hx-redirect": f"/halloween/monsters/{new_monster['word_id']}/edit"}
+        )
     
 
 async def monster_teach(request: Request, conn: Annotated[sqlite3.Connection, Depends(get_db)]):
