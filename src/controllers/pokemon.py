@@ -5,12 +5,10 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 
-from src import queries
+from repositories import word_repository
 from src.dependencies import get_db
-from src.types import Game, Pokemon
-from src.utils import get_four_unique_numbers
+from src.types import Game
 
 app = FastAPI()
 
@@ -25,15 +23,7 @@ async def index(
         request: Request,
         conn: Annotated[sqlite3.Connection, Depends(get_db)]
         ):
-    
-    pokemon = conn.execute(
-        """
-        SELECT w.word_id, w.word, w.thumbnail_img_path FROM word AS w 
-        JOIN word_category AS wc ON wc.word_id = w.word_id
-        JOIN category AS c ON c.category_id = wc.category_id
-        WHERE c.name = 'pokemon';
-        """
-        ).fetchall()
+    pokemon = word_repository.list_by_category(conn=conn, category="pokemon")
         
     return templates.TemplateResponse(
         request=request, name="pokemon/index.html", context={"pokemons": pokemon}
@@ -50,14 +40,7 @@ async def whos_that(
     # requires some work because pokemon ids are lost
     # need some kind of word_meta table or pokemon_meta table 
     # to connect pokemon numbers to words
-    pokemon = conn.execute(
-        """
-        SELECT w.word_id, w.word, w.large_img_path FROM word AS w 
-        JOIN word_category AS wc ON wc.word_id = w.word_id
-        JOIN category AS c ON c.category_id = wc.category_id
-        WHERE c.name = 'pokemon';
-        """
-        ).fetchall()
+    pokemon = word_repository.list_by_category(conn=conn, category="pokemon")
     
     chosen_pokemon = random.sample(population=pokemon, k=4)
     
