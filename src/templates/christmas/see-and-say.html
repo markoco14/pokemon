@@ -8,9 +8,9 @@
         <div class="image-container large">
             <img src="{{word.large_img_path}}" />
         </div>
-        <p class="see-say-name">{{word.name.capitalize()}}</p>
+        <p class="see-say-name">{{word.word.capitalize()}}</p>
         <div class="btn-container">
-            <a href="/christmas/see-and-say?word={{next_word.name}}" autofocus="true" class="next-btn">Next Word</a>
+            <a href="/christmas/see-and-say?word={{next_word.word}}" autofocus="true" class="next-btn">Next Word</a>
         </div>
         {% else %}
         <p>No words to see. Check the database.</p>
