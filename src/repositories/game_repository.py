@@ -34,3 +34,7 @@ def insert(
          "choice_ids": serialized_choice_ids
          })
     conn.commit()
+
+
+def set_game_won(conn: sqlite3.Connection, url_path: str):
+    conn.execute("UPDATE game SET status = 'won' WHERE url_path = :url_path", {"url_path": url_path})
