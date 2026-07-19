@@ -13,6 +13,9 @@ routes = [
     ("GET",     "/whos-that-pokemon",                               pokemon.whos_that_pokemon_redirect),
     ("GET",     "/whos-that-pokemon/{game_id}",                     pokemon.whos_that_pokemon_game),
     ("GET",     "/whos-that-pokemon/{game_id}/{guess_pokemon_id}",  pokemon.whos_that_pokemon_guess),
+    ("GET",     "/v2/whos-that-pokemon",                            pokemon.whos_that_pokemon_redirect_v2),
+    ("GET",     "/v2/whos-that-pokemon/{game_id}",                  pokemon.whos_that_pokemon_game_v2),
+    ("GET",     "/v2/whos-that-pokemon/{game_id}/{guess_id}",       pokemon.whos_that_pokemon_guess_v2),
 
     ("GET",     "/halloween",                                       halloween.index),
     ("GET",     "/halloween/monsters/teach",                        halloween.monster_teach),
