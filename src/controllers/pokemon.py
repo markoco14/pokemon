@@ -5,7 +5,7 @@ import random
 import sqlite3
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -117,23 +117,28 @@ async def whos_that_pokemon_game_v2(
         request: Request, 
         conn: Annotated[sqlite3.Connection, Depends(get_db)],
         game_id: str):
-    game_row = conn.execute("SELECT * FROM game WHERE url_path = :url_path;", {"url_path": game_id}).fetchone()
-    game = DBGame(
-        game_id=game_row["game_id"],
-        url_path=game_row["url_path"],
-        type=game_row["type"],
-        category=game_row["category"],
-        status=game_row["status"],
-        answer_id=game_row["answer_id"],
-        choice_ids=json.loads(game_row["choice_ids"]),
-        created_at=game_row["created_at"],
-    )
     
+    game_row = conn.execute("SELECT * FROM game WHERE url_path = :url_path;", {"url_path": game_id}).fetchone()
+
+    if not game_row:
+        return Response(status_code=404, content="Game not found")
+
+    choice_rows = conn.execute(
+        "SELECT * FROM word WHERE word_id IN (SELECT value FROM json_each(:ids));", 
+        {"ids": game_row["choice_ids"]}
+        ).fetchall()
+    
+    choices = {row["word_id"]: row for row in choice_rows}
+    
+    answer = choices.get(game_row["answer_id"])
+
     return templates.TemplateResponse(
         request=request,
         name="pokemon/v2-whos-that-pokemon.html",
         context={
-            "game": game
+            "game": game_row,
+            "choices": choices,
+            "answer": answer
         }
     )
     return row

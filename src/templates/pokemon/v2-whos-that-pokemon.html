@@ -10,15 +10,11 @@
             {# <p>{{game.guesses}}</p> #}
             {# end debug bar #}
             <div class="featured-pokemon">
-                <p>{{ game.answer_id }}</p>
-                {# <img src="{{game.answer.large_img_path}}" alt="{{game.answer.word}}"> #}
+                <img src="{{ answer.large_img_path }}" alt="">
             </div>
-            {# <div class="featured-pokemon">
-                <img src="{{game.answer.large_img_path}}" alt="{{game.answer.word}}">
-            </div> #}
             <ul class="choices">
-                {% for choice in game.choice_ids %}
-                <li>{{ choice }}</li>
+                {% for choice in choices.values() %}
+                <li><a href="#{{ choice.word_id }}">{{ choice.word.capitalize() }}</a></li>
                 {% endfor %}
                 {# {% for pokemon in game.pokemons  %}
                 <li class="{% if pokemon.word_id in game.guesses and pokemon.word_id != game.answer.word_id %}wrong{% elif pokemon.word_id in game.guesses and pokemon.word_id == game.answer.word_id %}correct{% else %}{% endif %}">
