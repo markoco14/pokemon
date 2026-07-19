@@ -1,0 +1,27 @@
+<li 
+    hx-get="/v2/whos-that-pokemon/{{ game.url_path }}/{{ choice.word_id }}"
+    hx-swap="outerHTML"
+    class="choice {{ style }}"
+    >
+    {{ choice.word.capitalize() }}
+</li>
+
+{% if is_response %}
+<div id="modal-content" class="modal-content" hx-swap-oob="true">
+    {% if is_correct %}
+    <p class="modal-heading correct">Yes!!!!</p>
+     <div class="featured-pokemon">
+        <img src="{{ choice.large_img_path }}" alt="">
+    </div>
+    <p class="modal-description">{{ choice.word.capitalize() }}</p>
+    <a class="modal-action" href="/v2/whos-that-pokemon">New Game</a>
+    {% else %}
+    <p class="modal-heading wrong">No!!!!</p>
+     <div class="featured-pokemon">
+        <img src="{{ choice.large_img_path }}" alt="">
+    </div>
+    <p class="modal-description">{{ choice.word.capitalize() }}</p>
+    <button class="modal-action" commandfor="modal" command="close">Guess again</button>
+    {% endif %}
+</div>
+{% endif %}

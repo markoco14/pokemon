@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Who's That Pokemon</title>{% endblock title %}
+
+{% block content %}
+    <div class="wrapper whos-that-pokemon">
+        <h1 class="page-heading">Who's That Pokemon</h1>
+        <section>
+            {# debug bar #}
+            {# <p>{{game.guesses}}</p> #}
+            {# end debug bar #}
+            <div class="featured-pokemon">
+                <img src="{{ answer.large_img_path }}" alt="">
+            </div>
+            <ul class="choices">
+                {% for choice in choices.values() %}
+                {% include "pokemon/game-option.html" %}
+                {% endfor %}
+            </ul>
+        </section>
+        <section class="actions">
+            <a href="/pokemon" class="end-game">Exit</a>
+            {# {% if game.finished %}
+            <a href="/whos-that-pokemon" class="new-game">New Game</a>
+            {% endif %} #}
+        </section>
+        {# {% if game.finished %}
+        <section>
+            <h2 class="section-heading">Pokemon this round</h2>
+            <ul class="choices-revealed">
+                {% for pokemon in game.pokemons %}
+                    <li class="border rounded p-2 flex flex-col justify-center items-center">
+                        <img src="{{pokemon.large_img_path}}" alt="{{pokemon.word}}">
+                        <span>{{pokemon.word.capitalize()}}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %} #}
+    </div>
+{% endblock content %}
