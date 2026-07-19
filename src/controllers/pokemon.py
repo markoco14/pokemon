@@ -123,29 +123,32 @@ async def whos_that_pokemon_game_v2(
         conn: Annotated[sqlite3.Connection, Depends(get_db)],
         url_path: str):
     
-    game_row = conn.execute("SELECT * FROM game WHERE url_path = :url_path;", {"url_path": url_path}).fetchone()
+    try:
+        game_row = game_repository.get_by_url_path(conn=conn, url_path=url_path)
+    except Exception as e:
+        return Response(status_code=500, content="something went wrong")
 
     if not game_row:
         return Response(status_code=404, content="Game not found")
 
-    choice_rows = conn.execute(
-        "SELECT * FROM word WHERE word_id IN (SELECT value FROM json_each(:ids));", 
-        {"ids": game_row["choice_ids"]}
-        ).fetchall()
+    try:
+        choice_rows = word_repository.get_game_choices(conn=conn, choice_ids=game_row["choice_ids"])
+    except Exception as e:
+        return Response(status_code=500, content="something went wrong")
     
-    choices = {row["word_id"]: dict(row) for row in choice_rows}
+    choices_dict = {row["word_id"]: dict(row) for row in choice_rows}
     s3_domain = get_s3_domain()
-    for key, value in choices.items():
+    for key, value in choices_dict.items():
         value["large_img_path"] = f'{s3_domain}/{value["large_img_path"]}'
     
-    answer = choices.get(game_row["answer_id"])
+    answer = choices_dict.get(game_row["answer_id"])
 
     return templates.TemplateResponse(
         request=request,
         name="pokemon/v2-whos-that-pokemon.html",
         context={
             "game": game_row,
-            "choices": choices,
+            "choices": choices_dict,
             "answer": answer
         }
     )

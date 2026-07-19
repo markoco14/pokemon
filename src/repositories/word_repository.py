@@ -38,6 +38,13 @@ def get(conn: sqlite3.Connection, word_id: int) -> sqlite3.Row:
     ).fetchone()
 
 
+def get_game_choices(conn: sqlite3.Connection, choice_ids):
+    return conn.execute(
+        "SELECT * FROM word WHERE word_id IN (SELECT value FROM json_each(:choice_ids));", 
+        {"choice_ids": choice_ids}
+        ).fetchall()
+
+
 def get_by_word(conn: sqlite3.Connection, word: str) -> sqlite3.Row:
     return conn.execute(
         """
