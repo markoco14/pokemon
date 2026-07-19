@@ -21,14 +21,17 @@ from src.templates import templates
 games = {}
 
 
+def get_s3_domain():
+    aws_bucket = os.environ.get("S3_BUCKET")
+    aws_region = os.environ.get("AWS_DEFAULT_REGION")
+    return f"https://{aws_bucket}.s3.{aws_region}.amazonaws.com"
+
 async def index(
         request: Request,
         conn: Annotated[sqlite3.Connection, Depends(get_db)]
         ):
     pokemon_rows = word_repository.list_by_category(conn=conn, category="pokemon")
-    aws_bucket = os.environ.get("S3_BUCKET")
-    aws_region = os.environ.get("AWS_DEFAULT_REGION")
-    s3_domain = f"https://{aws_bucket}.s3.{aws_region}.amazonaws.com"
+    s3_domain = get_s3_domain()
     pokemon_list = []
     for row in pokemon_rows:
         pokemon = dict(row)
@@ -137,7 +140,10 @@ async def whos_that_pokemon_game_v2(
         {"ids": game_row["choice_ids"]}
         ).fetchall()
     
-    choices = {row["word_id"]: row for row in choice_rows}
+    choices = {row["word_id"]: dict(row) for row in choice_rows}
+    s3_domain = get_s3_domain()
+    for key, value in choices.items():
+        value["large_img_path"] = f'{s3_domain}/{value["large_img_path"]}'
     
     answer = choices.get(game_row["answer_id"])
 
@@ -162,6 +168,9 @@ def whos_that_pokemon_guess_v2(
     game_row = conn.execute("SELECT * FROM game WHERE url_path = :url_path;", {"url_path": url_path}).fetchone()
 
     word_row = conn.execute("SELECT * FROM word WHERE word_id = :word_id;", {"word_id": guess_id}).fetchone()
+    word = dict(word_row)
+    s3_domain = get_s3_domain()
+    word["large_img_path"] = f'{s3_domain}/{word["large_img_path"]}'
 
     if guess_id == game_row["answer_id"]:
         return templates.TemplateResponse(
@@ -170,7 +179,7 @@ def whos_that_pokemon_guess_v2(
             context={
                 "style": "correct",
                 "game": game_row,
-                "choice": word_row,
+                "choice": word,
                 "is_response": True,
                 "is_correct": True
             }
@@ -182,18 +191,7 @@ def whos_that_pokemon_guess_v2(
         context={
             "style": "wrong",
             "game": game_row,
-            "choice": word_row,
+            "choice": word,
             "is_response": True
         }
     )
-        
-    if not games.get(game_id):
-        return RedirectResponse(url="/", status_code=303)
-
-    if guess_pokemon_id not in games[game_id].guesses:
-        games[game_id].guesses.append(guess_pokemon_id)
-
-    if guess_pokemon_id == games[game_id].answer["word_id"]:
-        games[game_id].finished = True
-    
-    return RedirectResponse(url=f"/whos-that-pokemon/{game_id}")
