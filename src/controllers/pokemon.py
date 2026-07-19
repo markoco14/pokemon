@@ -30,7 +30,7 @@ async def index(
     )
 
 
-async def whos_that(
+async def whos_that_pokemon_redirect(
         request: Request,
         conn: Annotated[sqlite3.Connection, Depends(get_db)]
         ):
@@ -57,7 +57,7 @@ async def whos_that(
     return RedirectResponse(url=f"/whos-that-pokemon/{game_id}")
 
 
-async def pokemon_play(request: Request, game_id: int):
+async def whos_that_pokemon_game(request: Request, game_id: int):
     if game_id not in games:
         return RedirectResponse(url="/", status_code=303)  
 
@@ -66,7 +66,7 @@ async def pokemon_play(request: Request, game_id: int):
     )
 
 
-def guess_that_pokemon(request: Request, game_id: int, guess_pokemon_id: int):
+def whos_that_pokemon_guess(request: Request, game_id: int, guess_pokemon_id: int):
     if not games.get(game_id):
         return RedirectResponse(url="/", status_code=303)
 
