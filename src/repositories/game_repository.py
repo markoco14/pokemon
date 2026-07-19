@@ -9,6 +9,8 @@ def list_by_category(conn: sqlite3.Connection, category: str):
         {"category": category}
         ).fetchall()
 
+def get_by_url_path(conn: sqlite3.Connection, url_path: str):
+        return conn.execute("SELECT * FROM game WHERE url_path = :url_path;", {"url_path": url_path}).fetchone()
 
 def insert(
         conn: sqlite3.Connection, 

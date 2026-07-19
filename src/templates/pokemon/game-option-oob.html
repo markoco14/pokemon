@@ -1,0 +1,19 @@
+{% include "pokemon/game-option.html" %}
+
+<div id="modal-content" class="modal-content" hx-swap-oob="true">
+    {% if is_correct %}
+    <p class="modal-heading correct">Yes!!!!</p>
+     <div class="featured-pokemon">
+        <img src="{{ choice.large_img_path }}" alt="">
+    </div>
+    <p class="modal-description">{{ choice.word.capitalize() }}</p>
+    <a class="modal-action" href="/whos-that-pokemon">New Game</a>
+    {% else %}
+    <p class="modal-heading wrong">No!!!!</p>
+     <div class="featured-pokemon">
+        <img src="{{ choice.large_img_path }}" alt="">
+    </div>
+    <p class="modal-description">{{ choice.word.capitalize() }}</p>
+    <button class="modal-action" commandfor="modal" command="close">Guess again</button>
+    {% endif %}
+</div>
