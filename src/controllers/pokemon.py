@@ -122,23 +122,21 @@ def whos_that_pokemon_guess(
     if guess_id == game_row["answer_id"]:
         return templates.TemplateResponse(
             request=request,
-            name="pokemon/game-option.html",
+            name="pokemon/game-option-oob.html",
             context={
                 "style": "correct",
                 "game": game_row,
                 "choice": word,
-                "is_response": True,
                 "is_correct": True
             }
         )
 
     return templates.TemplateResponse(
         request=request,
-        name="pokemon/game-option.html",
+        name="pokemon/game-option-oob.html",
         context={
             "style": "wrong",
             "game": game_row,
             "choice": word,
-            "is_response": True
         }
     )
