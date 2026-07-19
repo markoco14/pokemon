@@ -1,19 +1,16 @@
 import secrets
-import os
 import random
 import sqlite3
 from typing import Annotated
-from dotenv import load_dotenv
 
-from fastapi import Depends, FastAPI, Request, Response
+from fastapi import Depends, Request, Response
 from fastapi.responses import RedirectResponse
-from fastapi.staticfiles import StaticFiles
 
 from src.repositories import game_repository, word_repository
 from src.dependencies import get_db
 from src.types import Game
+from src.utils import get_s3_domain
 
-load_dotenv()
 
 
 from src.templates import templates
@@ -21,10 +18,6 @@ from src.templates import templates
 games = {}
 
 
-def get_s3_domain():
-    aws_bucket = os.environ.get("S3_BUCKET")
-    aws_region = os.environ.get("AWS_DEFAULT_REGION")
-    return f"https://{aws_bucket}.s3.{aws_region}.amazonaws.com"
 
 async def index(
         request: Request,
