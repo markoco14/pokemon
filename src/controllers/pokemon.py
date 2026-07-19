@@ -9,7 +9,7 @@ from fastapi.responses import RedirectResponse
 from src.repositories import game_repository, word_repository
 from src.dependencies import get_db
 from src.templates import templates
-from src.utils import get_s3_domain
+from src.utils import to_public_word
 
 
 async def index(
@@ -17,19 +17,18 @@ async def index(
         conn: Annotated[sqlite3.Connection, Depends(get_db)]
         ):
     pokemon_rows = word_repository.list_by_category(conn=conn, category="pokemon")
-    s3_domain = get_s3_domain()
+
     pokemon_list = []
     for row in pokemon_rows:
-        pokemon = dict(row)
-        if pokemon["thumbnail_img_path"]:
-            pokemon["thumbnail_img_path"] = f'{s3_domain}/{pokemon["thumbnail_img_path"]}'
-        if pokemon["large_img_path"]:
-            pokemon["large_img_path"] = f'{s3_domain}/{pokemon["large_img_path"]}'
+        pokemon = to_public_word(row)
         pokemon_list.append(pokemon)
 
-        
     return templates.TemplateResponse(
-        request=request, name="pokemon/index.html", context={"pokemons": pokemon_list}
+        request=request, 
+        name="pokemon/index.html", 
+        context={
+            "pokemons": pokemon_list
+            }
     )
 
 
@@ -80,11 +79,11 @@ async def whos_that_pokemon_game(
     except Exception as e:
         return Response(status_code=500, content="something went wrong")
     
-    choices_dict = {row["word_id"]: dict(row) for row in choice_rows}
-    s3_domain = get_s3_domain()
-    for key, value in choices_dict.items():
-        value["large_img_path"] = f'{s3_domain}/{value["large_img_path"]}'
-    
+    choices_dict = {
+        row["word_id"]: to_public_word(row) 
+        for row in choice_rows
+        }
+
     answer = choices_dict.get(game_row["answer_id"])
 
     return templates.TemplateResponse(
@@ -115,9 +114,7 @@ def whos_that_pokemon_guess(
     except Exception as e:
         return Response(status_code=500, content="something went wrong")
 
-    word = dict(word_row)
-    s3_domain = get_s3_domain()
-    word["large_img_path"] = f'{s3_domain}/{word["large_img_path"]}'
+    word = to_public_word(word_row)
 
     if guess_id == game_row["answer_id"]:
         return templates.TemplateResponse(
