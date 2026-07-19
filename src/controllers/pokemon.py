@@ -16,8 +16,11 @@ async def index(
         request: Request,
         conn: Annotated[sqlite3.Connection, Depends(get_db)]
         ):
-    pokemon_rows = word_repository.list_by_category(conn=conn, category="pokemon")
-
+    try:
+        pokemon_rows = word_repository.list_by_category(conn=conn, category="pokemon")
+    except Exception as e:
+        return Response(status_code=500, content="something went wrong")
+    
     pokemon_list = []
     for row in pokemon_rows:
         pokemon = to_public_word(row)
