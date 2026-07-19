@@ -158,9 +158,16 @@ def whos_that_pokemon_guess_v2(
         guess_id: int
         ):
     
-    game_row = conn.execute("SELECT * FROM game WHERE url_path = :url_path;", {"url_path": url_path}).fetchone()
+    try:
+        game_row = game_repository.get_by_url_path(conn=conn, url_path=url_path)
+    except Exception as e:
+        return Response(status_code=500, content="something went wrong")
+    
+    try:
+        word_row = word_repository.get(conn=conn, word_id=guess_id)
+    except Exception as e:
+        return Response(status_code=500, content="something went wrong")
 
-    word_row = conn.execute("SELECT * FROM word WHERE word_id = :word_id;", {"word_id": guess_id}).fetchone()
     word = dict(word_row)
     s3_domain = get_s3_domain()
     word["large_img_path"] = f'{s3_domain}/{word["large_img_path"]}'
