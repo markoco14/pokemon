@@ -1,11 +1,10 @@
-import random
 import sqlite3
 from typing import Annotated
 from fastapi import Depends, Request
 
 from fastapi.responses import RedirectResponse
 
-from repositories import word_repository
+from src.repositories import word_repository
 from src.dependencies import get_db
 from src.templates import templates
 

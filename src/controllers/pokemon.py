@@ -6,7 +6,7 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from repositories import word_repository
+from src.repositories import word_repository
 from src.dependencies import get_db
 from src.types import Game
 
