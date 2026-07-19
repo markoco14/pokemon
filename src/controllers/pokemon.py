@@ -105,7 +105,7 @@ async def whos_that_pokemon_redirect_v2(
         answer_id=answer_id,
         choice_ids=choice_ids)
  
-    return RedirectResponse(url=f"/v2/whos-that-pokemon/{url_path}")
+    return RedirectResponse(url=f"/whos-that-pokemon/{url_path}")
 
 
 
