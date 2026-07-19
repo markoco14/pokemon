@@ -398,7 +398,8 @@ form {
 dialog {
     width: 500px;
     height: 250px;
-    margin-inline: auto;
+    inset: 0;
+    margin: auto;
     opacity: 0;
     transform: translateY(30px);
     transition:

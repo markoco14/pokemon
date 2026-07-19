@@ -1,0 +1,19 @@
+<li 
+    hx-get="/v2/whos-that-pokemon/{{ game.url_path }}/{{ choice.word_id }}"
+    hx-swap="outerHTML"
+    class="{{ style }}"
+    >
+    {{ choice.word.capitalize() }}
+</li>
+
+{% if is_response %}
+<div id="modal-content" hx-swap-oob="true">
+    {% if is_correct %}
+    <p>Winner</p>
+    <a href="/v2/whos-that-pokemon">New Game</a>
+    {% else %}
+    <p>Loser</p>
+    <button commandfor="modal" command="close">Guess again</button>
+    {% endif %}
+</div>
+{% endif %}

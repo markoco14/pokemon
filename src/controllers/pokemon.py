@@ -1,5 +1,3 @@
-import json
-from pprint import pprint
 import secrets
 import random
 import sqlite3
@@ -9,11 +7,9 @@ from fastapi import Depends, FastAPI, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from src.models.word import Word
 from src.repositories import game_repository, word_repository
 from src.dependencies import get_db
 from src.types import Game
-from src.models.game import DBGame
 
 app = FastAPI()
 
@@ -116,9 +112,9 @@ async def whos_that_pokemon_redirect_v2(
 async def whos_that_pokemon_game_v2(
         request: Request, 
         conn: Annotated[sqlite3.Connection, Depends(get_db)],
-        game_id: str):
+        url_path: str):
     
-    game_row = conn.execute("SELECT * FROM game WHERE url_path = :url_path;", {"url_path": game_id}).fetchone()
+    game_row = conn.execute("SELECT * FROM game WHERE url_path = :url_path;", {"url_path": url_path}).fetchone()
 
     if not game_row:
         return Response(status_code=404, content="Game not found")
@@ -141,17 +137,43 @@ async def whos_that_pokemon_game_v2(
             "answer": answer
         }
     )
-    return row
-    if game_id not in games:
-        return RedirectResponse(url="/", status_code=303)  
+
+
+def whos_that_pokemon_guess_v2(
+        request: Request,
+        conn: Annotated[sqlite3.Connection, Depends(get_db)],
+        url_path: str, 
+        guess_id: int
+        ):
+    
+    game_row = conn.execute("SELECT * FROM game WHERE url_path = :url_path;", {"url_path": url_path}).fetchone()
+
+    word_row = conn.execute("SELECT * FROM word WHERE word_id = :word_id;", {"word_id": guess_id}).fetchone()
+
+    if guess_id == game_row["answer_id"]:
+        return templates.TemplateResponse(
+            request=request,
+            name="pokemon/game-option.html",
+            context={
+                "style": "correct",
+                "game": game_row,
+                "choice": word_row,
+                "is_response": True,
+                "is_correct": True
+            }
+        )
 
     return templates.TemplateResponse(
-        request=request, name="pokemon/whos-that-pokemon.html", context={"game": games[game_id]}
+        request=request,
+        name="pokemon/game-option.html",
+        context={
+            "style": "wrong",
+            "game": game_row,
+            "choice": word_row,
+            "is_response": True
+        }
     )
-
-
-def whos_that_pokemon_guess_v2(request: Request, game_id: int, guess_pokemon_id: int):
-    return "ok"
+        
     if not games.get(game_id):
         return RedirectResponse(url="/", status_code=303)
 

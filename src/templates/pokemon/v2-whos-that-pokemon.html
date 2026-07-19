@@ -14,13 +14,8 @@
             </div>
             <ul class="choices">
                 {% for choice in choices.values() %}
-                <li><a href="#{{ choice.word_id }}">{{ choice.word.capitalize() }}</a></li>
+                {% include "pokemon/game-option.html" %}
                 {% endfor %}
-                {# {% for pokemon in game.pokemons  %}
-                <li class="{% if pokemon.word_id in game.guesses and pokemon.word_id != game.answer.word_id %}wrong{% elif pokemon.word_id in game.guesses and pokemon.word_id == game.answer.word_id %}correct{% else %}{% endif %}">
-                    <a href="/whos-that-pokemon/{{game.id}}/{{pokemon.word_id}}">{{pokemon.word.capitalize()}}</a>
-                </li>
-                {% endfor %} #}
             </ul>
         </section>
         <section class="actions">
