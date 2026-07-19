@@ -5,3 +5,4 @@ __pycache__
 output.css
 vendor
 *.db-*
+.env
